@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Carreer_types {
+  education
+  financial
+  construction
+  innovation
+  electronics
+  agriculture
+  transportation
+}
+
+model Accounts{
+  id String @unique @default(uuid())
+  LaserID String 
+  SSN String @unique 
+  firstName String 
+  middleName String 
+  lastName String 
+  pictureProfile String?
+  BoD DateTime
+  phone String 
+  citizenship String 
+  email String 
+  title String 
+  country String
+  isVerified Boolean @default(false) 
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime? 
+} 
+
+model careerList{
+  careerID String @unique
+  title String
+  type Carreer_types @default(education)
+}
+
+model accountCareer{
+  accountID String @unique
+  careerID String 
+  salary Int
+}
+
+model userAdress{
+  accountID String @unique
+  gaID String @unique
+  houseNo String
+  village String
+  lane String
+  road String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime? 
+}
+
+model globalAddress{
+  id String  @unique
+  postalCode String
+  province String
+  district String
+  subDistrict String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime? 
+}
+
+model OTP{
+  id String @unique @default(uuid())
+  expiredTime DateTime
+  OtpNumber String
+  accountID String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime? 
+}
+
+model shop{
+  id String @unique @default(uuid())
+  accountID String @unique
+  shopName String
+  bussinessType String
+  createdDate DateTime
+  salesPerYear Float
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime? 
+}
+
+model shopAddress{
+  shopID String @unique @default(uuid())
+  gaID String @unique
+  houseNO String
+  village String
+  lane String
+  road String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime? 
+}
