@@ -54,7 +54,7 @@ model accountCareer{
 
 model userAdress{
   accountID String @unique
-  gaID String @unique
+  gaID String 
   houseNo String
   village String
   lane String

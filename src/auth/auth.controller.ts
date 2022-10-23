@@ -1,12 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req,Res, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req,Res, UseInterceptors, UploadedFile, ParseFilePipe, FileTypeValidator } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import {AddressDto} from'./dto/address.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-
-
-
-
 
 @Controller('auth')
 export class AuthController {
@@ -34,9 +30,13 @@ export class AuthController {
 
   @Post('/file')
   @UseInterceptors(FilesInterceptor('image'),)
-  async auploadFile(@UploadedFile() file: Express.Multer.File){
-    console.log('acesss')
-    console.log('image',file)
+  async auploadFile(@Req() req,@UploadedFile() file: Express.Multer.File){
+    console.log(file)
   }
 
+  @Post('token')//test
+  async validateAcessToken( @Req() req, @Res() res) {
+    const payload = await this.authService.validateAccessToken(req.body.token)
+    return res.status(200).send({payload});
+  }
 }

@@ -31,7 +31,7 @@ export class ShopService {
         road,
       }
     })
-    return res.send({shop}).status(201)
+    return res.status(201).send({shop})
   }
 
   async getInformation(req:Request ,res:Response){
@@ -47,7 +47,7 @@ export class ShopService {
         shopName:shop.shopName,
         bussinessType:shop.bussinessType,
       }
-      return res.send({data}).status(200)
+      return res.status(200).send({data})
     } catch (error) {
       throw new BadRequestException('not authorized')
     }

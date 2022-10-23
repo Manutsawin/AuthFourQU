@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api')
   app.useGlobalPipes(new ValidationPipe({whitelist:true}));
-  app.use(cookieParser())
+  // app.use(cookieParser())
   await app.listen(3000);
 }
 bootstrap();

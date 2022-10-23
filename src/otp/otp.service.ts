@@ -46,7 +46,7 @@ export class OtpService {
         await this.auth.UserIsVerified(dto.id)
         await this.prisma.oTP.delete({ where: dto})
         const token = await this.auth.signRefreshToken(dto.id)
-        return res.send(token).status(200)
+        return res.status(200).send(token)
       }
       return res.send({message:'notfound'}).status(304)
     } catch (error) {

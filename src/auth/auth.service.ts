@@ -55,10 +55,12 @@ export class AuthService {
       }
     })
     
-    await this.otpService.sendOTP(user.id)
+    // await this.otpService.sendOTP(user.id)
 
-    // const token = await this.signRefreshToken(user.id,dto)
-    return  res.send(user.id).status(201);
+    const token = await this.signRefreshToken(user.id)
+    // return  res.send(user.id).status(201);
+    return res.send({token})
+    
   }
 
   async updateCurrentAddress(dto:AddressDto,req:Request ,res:Response){
@@ -74,7 +76,7 @@ export class AuthService {
         lane : lane,
       }
     })
-    return res.send({message:'updated'}).status(200)
+    return res.status(200).send({message:'updated'})
   }
 
   async validateRefreshToken(token:string){
@@ -89,11 +91,18 @@ export class AuthService {
   async validateAccessToken(token:string){
     try {
       const payload = await this.jwt.verify(token,{secret:jwtSecretAcess})
+      if(!payload){
+        throw new BadRequestException('not authorized')
+      }
+      const time1 = new Date(payload.timeExp)
+      const time2 = new Date()
+      if(time1<time2){
+        throw new BadRequestException('not authorized')
+      }
+      return  payload
     } catch (error) {
       throw new BadRequestException('not authorized')
-    }
-    const payload = await this.jwt.verify(token,{secret:jwtSecretAcess});
-    return  payload
+    } 
   }
 
   async signRefreshToken(id:string){
@@ -112,8 +121,21 @@ export class AuthService {
 
   async signAcessToken(req:Request ,res:Response){
     const payload = await this.validateRefreshToken(req.body.token)
-    const token = await this.jwt.signAsync(payload,{secret:jwtSecretAcess})
-    return res.send({token}).status(200)
+    const {id,LaserID,SSN,firstName,middleName,lastName,citizenship} = payload
+    const exp = new Date()
+    exp.setUTCMinutes(exp.getUTCMinutes()+5)
+    const data = {
+      id,
+      LaserID,
+      SSN,
+      firstName,
+      middleName,
+      lastName,
+      citizenship,
+      timeExp:exp.toISOString()
+    }
+    const token = await this.jwt.signAsync(data,{secret:jwtSecretAcess})
+    return res.status(200).send({token})
   }
 
   async UserIsVerified(id:string): Promise<Accounts>{
@@ -139,9 +161,7 @@ export class AuthService {
       phone,
       email
     }
-    return res.send({data}).status(200)
+    return res.status(200).send({data})
   }
-
-
 
 }
