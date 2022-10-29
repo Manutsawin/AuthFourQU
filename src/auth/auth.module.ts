@@ -4,14 +4,16 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from 'prisma/prisma.module';
 import { OtpModule } from '../otp/otp.module';
-import { MulterModule } from '@nestjs/platform-express';
+import { FileSystemStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 
 @Module({
   imports:[
     JwtModule,PrismaModule,OtpModule,
-    MulterModule.register({
-      dest:'./public',
-    }) 
+    NestjsFormDataModule.config({
+      storage: FileSystemStoredFile,
+      fileSystemStoragePath: './public/picProfile',
+      autoDeleteFile:false
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService],

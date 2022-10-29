@@ -14,69 +14,79 @@ export class AuthService {
   constructor(private prisma : PrismaService,private jwt:JwtService,private readonly otpService: OtpService){}
 
   async signup(dto:AuthDto,req:Request ,res:Response){ 
-    const {LaserID,SSN,firstName,middleName,lastName,BoD,phone,citizenship,email,title,country,salary,careerID,gaID,houseNO,village,lane,road}=dto
-    const foundSSN = await this.prisma.accounts.findUnique({where:{SSN}});
-    if(foundSSN){
-      throw new BadRequestException('Wrong credentail');
+    try{
+      const {LaserID,SSN,firstName,middleName,lastName,BoD,phone,citizenship,email,title,country,salary,careerID,gaID,houseNO,village,lane,road}=dto
+      const foundSSN = await this.prisma.accounts.findUnique({where:{SSN}});
+      if(foundSSN){
+        throw new BadRequestException('Wrong credentail');
+      }
+      let myDate: any = new Date();// date test
+      const user = await this.prisma.accounts.create({
+        data:{
+          LaserID,
+          SSN,
+          firstName,
+          middleName,
+          lastName,
+          BoD:myDate,//date test
+          phone,
+          citizenship,
+          email,
+          title,
+          country
+        }
+      })
+      
+      await this.prisma.accountCareer.create({
+        data:{
+          accountID:user.id,
+          careerID: careerID,
+          salary: Number(salary),
+        }
+      })
+
+      await this.prisma.userAdress.create({
+        data:{
+          accountID:user.id,
+          gaID:gaID,
+          houseNo:houseNO,
+          village:village,
+          lane:lane,
+          road:road,      
+        }
+      })
+      
+      // await this.otpService.sendOTP(user.id)
+
+      const token = await this.signRefreshToken(user.id)
+      // return  res.status(201).send(user.id);
+      return res.send({token})
     }
-    let myDate: any = new Date();// date test
-    const user = await this.prisma.accounts.create({
-      data:{
-        LaserID,
-        SSN,
-        firstName,
-        middleName,
-        lastName,
-        BoD:myDate,//date test
-        phone,
-        citizenship,
-        email,
-        title,
-        country
-      }
-    })
-    
-    await this.prisma.accountCareer.create({
-      data:{
-        accountID:user.id,
-        careerID: careerID,
-        salary: Number(salary),
-      }
-    })
-
-    await this.prisma.userAdress.create({
-      data:{
-        accountID:user.id,
-        gaID:gaID,
-        houseNo:houseNO,
-        village:village,
-        lane:lane,
-        road:road,      
-      }
-    })
-    
-    // await this.otpService.sendOTP(user.id)
-
-    const token = await this.signRefreshToken(user.id)
-    // return  res.send(user.id).status(201);
-    return res.send({token})
-    
+    catch{
+      return res.status(400).send({message:"Bad Request"})
+    }
   }
 
   async updateCurrentAddress(dto:AddressDto,req:Request ,res:Response){
-    const {gaID,houseNo,village,lane}=dto
-    const payload = await this.validateAccessToken(req.headers.authorization.split(' ')[1])
-    const foundUser = await this.prisma.account.findUnique({ where: payload.id })
 
-    await foundUser.update({
-      data:{ 
-        gaID : gaID,
-        houseNo : houseNo,
-        village : village,
-        lane : lane,
-      }
-    })
-    return res.status(200).send({message:'updated'})
+    try{
+      const {gaID,houseNo,village,lane}=dto
+      const payload = await this.validateAccessToken(req.headers.authorization.split(' ')[1])
+      const foundUser = await this.prisma.account.findUnique({ where: payload.id })
+
+      await foundUser.update({
+        data:{ 
+          gaID : gaID,
+          houseNo : houseNo,
+          village : village,
+          lane : lane,
+        }
+      })
+      return res.status(200).send({message:'updated',time_stamp:new Date().toUTCString()})
+    }
+    catch{
+      return res.status(304).send({message:"Not Modified"})
+    }
   }
 
   async validateRefreshToken(token:string){
@@ -135,33 +145,61 @@ export class AuthService {
       timeExp:exp.toISOString()
     }
     const token = await this.jwt.signAsync(data,{secret:jwtSecretAcess})
-    return res.status(200).send({token})
+    return res.status(200).send({token,time_stamp:new Date().toUTCString()})
   }
 
   async UserIsVerified(id:string): Promise<Accounts>{
-    const foundUser = await this.prisma.accounts.update({
-      where:{id:id},
-      data:{ isVerified : true }
-    })
-    return foundUser
+    try{
+      const foundUser = await this.prisma.accounts.update({
+        where:{id:id},
+        data:{ isVerified : true }
+      })
+      return foundUser
+    }
+    catch{
+      return null
+    }
   }
 
   async getUserInformation(req:Request ,res:Response){
-    const payload = await this.validateAccessToken(req.headers.authorization.split(' ')[1])
-    const foundUser = await this.prisma.account.findUnique({ where: payload.id })
-    if(!foundUser){
-      new BadRequestException('not authorized')
+    try{
+      const payload = await this.validateAccessToken(req.body.token)
+      const foundUser = await this.prisma.account.findUnique({ where: payload.id })
+      if(!foundUser){
+        new BadRequestException('not authorized')
+      }
+      const {firstName,middleName,lastName,BoD,phone,email,pictureProfile}=foundUser
+      const data ={
+        firstName,
+        middleName,
+        lastName,
+        BoD,
+        phone,
+        email,
+        pictureProfile
+      }
+      return res.status(200).send({data,time_stamp:new Date().toUTCString()})
     }
-    const {firstName,middleName,lastName,BoD,phone,email}=foundUser
-    const data ={
-      firstName,
-      middleName,
-      lastName,
-      BoD,
-      phone,
-      email
+    catch{
+      return res.status(400).send({message:"Bad Request"})
+    } 
+  }
+
+  async editPic(req:Request ,res:Response,path:string){
+    try{
+      const payload = await this.jwt.verify(req.body.token, { secret: jwtSecretAcess })
+      const foundUser = await this.prisma.accounts.update({
+        where:{id:payload.id},
+        data:{ pictureProfile : path }
+      })
+      if (!foundUser) {
+        return false;
+      }
+      return true
     }
-    return res.status(200).send({data})
+    catch{
+      return false
+    }
   }
 
 }

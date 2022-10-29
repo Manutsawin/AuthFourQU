@@ -7,12 +7,24 @@ import { CentralService } from './central.service';
 export class CentralController {
   constructor(private readonly centralService: CentralService) {}
 
-  @Post('transfer')
-  transfer( @Req() req, @Res() res){
+  @Post('userPayment')
+  userPayment( @Req() req, @Res() res){
+    // userPayment 
+  }
+
+  @Post('shopPayment')
+  shopPayment( @Req() req, @Res() res){
+    // shopPayment 
   }
 
   @Get('statement')
   statement( @Req() req, @Res() res){
+    // get statement transaction Api
+  }
+
+  @Get('shopPayment')
+  getShoppayment() {
+    // get shop payment transaction Api
   }
 
 }

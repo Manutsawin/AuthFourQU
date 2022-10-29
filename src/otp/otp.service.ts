@@ -17,25 +17,30 @@ export class OtpService {
     ){}
 
   async createOTP(accountID:string) {
-    const expDate = new Date()
-    expDate.setUTCMinutes(expDate.getUTCMinutes()+15)
-    var otpNum = await this.randomOTP()
-    var OtpNumber = String(otpNum)
-    var duplicate = await this.prisma.oTP.findMany({where:{OtpNumber}})
-    while(duplicate){
-      otpNum = await this.randomOTP()
-      OtpNumber = String(otpNum)
-      duplicate = await this.prisma.oTP.findMany({where:{OtpNumber}})
-    }
-
-    const otp= await this.prisma.oTP.create({
-      data:{
-        accountID:accountID,
-        expiredTime:expDate,
-        OtpNumber:String(otpNum)
+    try{
+      const expDate = new Date()
+      expDate.setUTCMinutes(expDate.getUTCMinutes()+15)
+      var otpNum = await this.randomOTP()
+      var OtpNumber = String(otpNum)
+      var duplicate = await this.prisma.oTP.findMany({where:{OtpNumber}})
+      while(duplicate){
+        otpNum = await this.randomOTP()
+        OtpNumber = String(otpNum)
+        duplicate = await this.prisma.oTP.findMany({where:{OtpNumber}})
       }
-    })
-    return otp;
+  
+      const otp= await this.prisma.oTP.create({
+        data:{
+          accountID:accountID,
+          expiredTime:expDate,
+          OtpNumber:String(otpNum)
+        }
+      })
+      return otp;
+    }
+    catch{
+      return null
+    }
   }
  
   //not test
@@ -48,7 +53,7 @@ export class OtpService {
         const token = await this.auth.signRefreshToken(dto.id)
         return res.status(200).send(token)
       }
-      return res.send({message:'notfound'}).status(304)
+      return res.status(304).send({message:'not found'})
     } catch (error) {
       throw new BadRequestException('not authorized')
     }

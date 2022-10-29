@@ -10,28 +10,36 @@ export class ShopService {
   constructor(private prisma : PrismaService,private auth:AuthService){}
 
   async create(dto: CreateShopDto,req:Request ,res:Response) {
-    const {accountID,shopName,bussinessType,createdDate,salesPerYear,gaID,houseNO,village,lane,road} = dto
-    const shop = await this.prisma.shop.create({
-      data:{
-        accountID,
-        shopName,
-        bussinessType,
-        createdDate,
-        salesPerYear,
-      }
-    })
+    try{
+      const {accountID,shopName,bussinessType,createdDate,salesPerYear,gaID,houseNO,village,lane,road} = dto
+      const shop = await this.prisma.shop.create({
+        data:{
+          accountID,
+          shopName,
+          bussinessType,
+          createdDate,
+          salesPerYear,
+        }
+      })
+      
+      await this.prisma.shopAddress.create({
+        data:{
+          shopID:shop.id,
+          gaID,
+          houseNO,
+          village,
+          lane,
+          road,
+        }
+      })
+
+      return res.status(201).send({shop,time_stamp:new Date().toUTCString()})
+    }
+    catch{
+      return res.status(400).send({message:"can't create"})
+    }
     
-    await this.prisma.shopAddress.create({
-      data:{
-        shopID:shop.id,
-        gaID,
-        houseNO,
-        village,
-        lane,
-        road,
-      }
-    })
-    return res.status(201).send({shop})
+    
   }
 
   async getInformation(req:Request ,res:Response){
@@ -47,7 +55,7 @@ export class ShopService {
         shopName:shop.shopName,
         bussinessType:shop.bussinessType,
       }
-      return res.status(200).send({data})
+      return res.status(200).send({data,time_stamp:new Date().toUTCString()})
     } catch (error) {
       throw new BadRequestException('not authorized')
     }

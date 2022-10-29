@@ -2,8 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req,Res } from '@nes
 import { ShopService } from './shop.service';
 import { CreateShopDto } from './dto/create-shop.dto';
 
-
-
 @Controller('shop')
 export class ShopController {
   constructor(private readonly shopService: ShopService) {}
@@ -17,5 +15,5 @@ export class ShopController {
   getInformation(@Body()dto:CreateShopDto,@Req() req, @Res() res) {
     return this.shopService.getInformation(req,res)
   }
-  
+
 }

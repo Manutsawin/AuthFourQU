@@ -4,10 +4,12 @@ export class AuthDto{
    
     @IsNotEmpty()
     @IsString()
+    @Length(12,12,{message:'LaserID has to be 12 chars'})
     public LaserID : string;
 
     @IsNotEmpty()
     @IsString()
+    @Length(9,9,{message:'SSN has to be 9 chars'})
     public SSN : string;
 
     @IsNotEmpty()
