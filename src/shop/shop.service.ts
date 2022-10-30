@@ -12,12 +12,13 @@ export class ShopService {
   async create(dto: CreateShopDto,req:Request ,res:Response) {
     try{
       const {accountID,shopName,bussinessType,createdDate,salesPerYear,gaID,houseNO,village,lane,road} = dto
+      const d = new Date() //test time
       const shop = await this.prisma.shop.create({
         data:{
           accountID,
           shopName,
           bussinessType,
-          createdDate,
+          createdDate:d, //must edit later
           salesPerYear,
         }
       })
@@ -44,7 +45,7 @@ export class ShopService {
 
   async getInformation(req:Request ,res:Response){
     try {
-      const payload = await this.auth.validateAccessToken(req.headers.authorization.split(' ')[1])
+      const payload = await this.auth.validateAccessToken(req.body.token)
       if(!payload){
         new BadRequestException('not authorized')
       }

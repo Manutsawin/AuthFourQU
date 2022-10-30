@@ -1,30 +1,28 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req,Res } from '@nestjs/common';
 import { CentralService } from './central.service';
 
-
-
-@Controller('central')
+@Controller('access')
 export class CentralController {
   constructor(private readonly centralService: CentralService) {}
 
   @Post('userPayment')
   userPayment( @Req() req, @Res() res){
-    // userPayment 
+    return this.centralService.userPayment(req,res)
   }
 
   @Post('shopPayment')
   shopPayment( @Req() req, @Res() res){
-    // shopPayment 
+    this.centralService.shopPayment(req,res)
   }
 
-  @Get('statement')
-  statement( @Req() req, @Res() res){
-    // get statement transaction Api
+  @Get('userStatement')
+  getStatement( @Req() req, @Res() res){
+    this.centralService.statement(req,res)
   }
 
-  @Get('shopPayment')
-  getShoppayment() {
-    // get shop payment transaction Api
+  @Get('shopStatement')
+  getShopStatement(@Req() req, @Res() res) {
+    this.centralService.shopStatement(req,res)
   }
 
 }

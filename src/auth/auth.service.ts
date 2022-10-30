@@ -16,9 +16,10 @@ export class AuthService {
   async signup(dto:AuthDto,req:Request ,res:Response){ 
     try{
       const {LaserID,SSN,firstName,middleName,lastName,BoD,phone,citizenship,email,title,country,salary,careerID,gaID,houseNO,village,lane,road}=dto
+      
       const foundSSN = await this.prisma.accounts.findUnique({where:{SSN}});
       if(foundSSN){
-        throw new BadRequestException('Wrong credentail');
+        throw new BadRequestException('Bad Request');
       }
       let myDate: any = new Date();// date test
       const user = await this.prisma.accounts.create({
@@ -60,7 +61,7 @@ export class AuthService {
 
       const token = await this.signRefreshToken(user.id)
       // return  res.status(201).send(user.id);
-      return res.send({token})
+      return res.status(201).send({token,time_stamp:new Date().toUTCString()})
     }
     catch{
       return res.status(400).send({message:"Bad Request"})
@@ -92,10 +93,20 @@ export class AuthService {
   async validateRefreshToken(token:string){
     try {
       const payload = await this.jwt.verify(token,{secret:jwtSecret})
+      
+      if(!payload){
+        throw new BadRequestException('not authorized')
+      }
+      const time1 = new Date(payload.timeExp)
+      const time2 = new Date()
+      if(time1<time2){
+        console.log("access")
+        throw new BadRequestException('not authorized')
+      }
       return  payload
     } catch (error) {
       throw new BadRequestException('not authorized')
-    }
+    } 
   }
 
   async validateAccessToken(token:string){
@@ -117,6 +128,8 @@ export class AuthService {
 
   async signRefreshToken(id:string){
     const user = await this.prisma.accounts.findUnique({where:{id}})
+    const exp = new Date()
+    exp.setDate(exp.getDate()+7)//edit ยังไม่เสร้๗
     const payload = {
       id:user.id,
       LaserID:user.LaserID,
@@ -125,6 +138,7 @@ export class AuthService {
       middleName:user.middleName,
       lastName:user.lastName,
       citizenship:user.citizenship,
+      timeExp:exp.toISOString()
     }
     return await this.jwt.signAsync(payload,{secret:jwtSecret})
   }
@@ -133,7 +147,7 @@ export class AuthService {
     const payload = await this.validateRefreshToken(req.body.token)
     const {id,LaserID,SSN,firstName,middleName,lastName,citizenship} = payload
     const exp = new Date()
-    exp.setUTCMinutes(exp.getUTCMinutes()+5)
+    exp.setTime(exp.getTime()+300000) // 5 minutes
     const data = {
       id,
       LaserID,

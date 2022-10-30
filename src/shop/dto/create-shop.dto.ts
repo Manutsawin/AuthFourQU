@@ -2,9 +2,7 @@ import { IsNotEmpty,IsString,IsEmail,Length, IsDate } from "class-validator";
 
 export class CreateShopDto {
 
-    @IsNotEmpty()
-    @IsString()
-    public shopID : string;
+   
     
     @IsNotEmpty()
     @IsString()
@@ -18,13 +16,15 @@ export class CreateShopDto {
     @IsString()
     public bussinessType : string;
 
+    // @IsNotEmpty()
+    // @IsDate()
+    // public createdDate : Date
+
     @IsNotEmpty()
-    @IsDate()
-    public createdDate : Date
+    public createdDate : string
 
     @IsNotEmpty()
     public salesPerYear : number
-
 
 
     @IsNotEmpty()
