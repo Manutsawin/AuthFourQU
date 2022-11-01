@@ -43,7 +43,6 @@ export class OtpService {
     }
   }
  
-  //not test
   async checkOTP(dto:otpDto,req:Request ,res:Response) {
     try {
       const otp = await this.prisma.oTP.findUnique({where:dto})
