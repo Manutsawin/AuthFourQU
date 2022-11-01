@@ -1,5 +1,5 @@
 import { OtpService } from './otp.service';
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req,Res } from '@nestjs/common';
+import { Controller, Post, Body, Req,Res } from '@nestjs/common';
 import {otpDto} from '../otp/dto/otp.dto'
 
 @Controller('otp')

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req,Res, UseInterceptors, UploadedFile, ParseFilePipe, FileTypeValidator, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req,Res, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import {AddressDto} from'./dto/address.dto';
