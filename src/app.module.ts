@@ -5,6 +5,7 @@ import { OtpModule } from './otp/otp.module';
 import { ShopModule } from './shop/shop.module';
 import { CentralModule } from './central/central.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { JwtRefreshModule } from './jwt-refresh/jwt-refresh.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { MulterModule } from '@nestjs/platform-express';
     CentralModule,
     MulterModule.register({
       dest:'./public',
-    }) 
+    }),
+    JwtRefreshModule 
   ],
 })
 export class AppModule {}

@@ -7,11 +7,13 @@ import { JwtService } from '@nestjs/jwt';
 import {jwtSecret,jwtSecretAcess} from '../utils/constants';
 import { Request,Response } from 'express';
 import { OtpService } from '../otp/otp.service';
+import { JwtRefreshService } from '../jwt-refresh/jwt-refresh.service';
+import { JwtRefresh } from 'src/jwt-refresh/entities/jwt-refresh.entity';
 
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma : PrismaService,private jwt:JwtService,private readonly otpService: OtpService){}
+  constructor(private prisma : PrismaService,private jwt:JwtService,private jwtRefresh:JwtRefreshService,private readonly otpService: OtpService){}
 
   async signup(dto:AuthDto,req:Request ,res:Response){ 
     try{
@@ -97,12 +99,7 @@ export class AuthService {
       if(!payload){
         throw new BadRequestException('not authorized')
       }
-      const time1 = new Date(payload.timeExp)
-      const time2 = new Date()
-      if(time1<time2){
-        console.log("access")
-        throw new BadRequestException('not authorized')
-      }
+  
       return  payload
     } catch (error) {
       throw new BadRequestException('not authorized')
@@ -115,11 +112,6 @@ export class AuthService {
       if(!payload){
         throw new BadRequestException('not authorized')
       }
-      const time1 = new Date(payload.timeExp)
-      const time2 = new Date()
-      if(time1<time2){
-        throw new BadRequestException('not authorized')
-      }
       return  payload
     } catch (error) {
       throw new BadRequestException('not authorized')
@@ -128,8 +120,6 @@ export class AuthService {
 
   async signRefreshToken(id:string){
     const user = await this.prisma.accounts.findUnique({where:{id}})
-    const exp = new Date()
-    exp.setDate(exp.getDate()+7)//edit ยังไม่เสร้๗
     const payload = {
       id:user.id,
       LaserID:user.LaserID,
@@ -138,16 +128,15 @@ export class AuthService {
       middleName:user.middleName,
       lastName:user.lastName,
       citizenship:user.citizenship,
-      timeExp:exp.toISOString()
+      time_stamp:new Date().toISOString()
     }
-    return await this.jwt.signAsync(payload,{secret:jwtSecret})
+    return await this.jwtRefresh.signRefreshToken(payload)
+    // return await this.jwt.signAsync(payload,{secret:jwtSecret})
   }
 
   async signAcessToken(req:Request ,res:Response){
     const payload = await this.validateRefreshToken(req.body.token)
     const {id,LaserID,SSN,firstName,middleName,lastName,citizenship} = payload
-    const exp = new Date()
-    exp.setTime(exp.getTime()+300000) // 5 minutes
     const data = {
       id,
       LaserID,
@@ -156,7 +145,7 @@ export class AuthService {
       middleName,
       lastName,
       citizenship,
-      timeExp:exp.toISOString()
+      time_stamp: new Date().toISOString()
     }
     const token = await this.jwt.signAsync(data,{secret:jwtSecretAcess})
     return res.status(200).send({token,time_stamp:new Date().toUTCString()})
