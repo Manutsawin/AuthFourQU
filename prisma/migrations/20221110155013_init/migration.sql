@@ -9,6 +9,7 @@ CREATE TABLE "Accounts" (
     "firstName" TEXT NOT NULL,
     "middleName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
+    "pictureProfile" TEXT,
     "BoD" TIMESTAMP(3) NOT NULL,
     "phone" TEXT NOT NULL,
     "citizenship" TEXT NOT NULL,
@@ -104,6 +105,9 @@ CREATE UNIQUE INDEX "Accounts_id_key" ON "Accounts"("id");
 CREATE UNIQUE INDEX "Accounts_SSN_key" ON "Accounts"("SSN");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Accounts_email_key" ON "Accounts"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "careerList_careerID_key" ON "careerList"("careerID");
 
 -- CreateIndex
@@ -111,9 +115,6 @@ CREATE UNIQUE INDEX "accountCareer_accountID_key" ON "accountCareer"("accountID"
 
 -- CreateIndex
 CREATE UNIQUE INDEX "userAdress_accountID_key" ON "userAdress"("accountID");
-
--- CreateIndex
-CREATE UNIQUE INDEX "userAdress_gaID_key" ON "userAdress"("gaID");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "globalAddress_id_key" ON "globalAddress"("id");

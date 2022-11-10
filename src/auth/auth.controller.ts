@@ -20,6 +20,11 @@ export class AuthController {
   ReqAccessToken( @Req() req, @Res() res) {
     return this.authService.signAcessToken(req,res);
   }
+
+  @Post('signinEmail')
+  signInEmail( @Req() req, @Res() res) {
+    return this.authService.signin(req,res);
+  }
   
   @Post('updateCurrentAddress')
   updateCurrentAddress(@Body()dto:AddressDto ,@Req() req, @Res() res){

@@ -8,7 +8,7 @@ import {jwtSecret,jwtSecretAcess} from '../utils/constants';
 import { Request,Response } from 'express';
 import { OtpService } from '../otp/otp.service';
 import { JwtRefreshService } from '../jwt-refresh/jwt-refresh.service';
-import { JwtRefresh } from 'src/jwt-refresh/entities/jwt-refresh.entity';
+
 
 
 @Injectable()
@@ -67,6 +67,25 @@ export class AuthService {
     }
     catch{
       return res.status(400).send({message:"Bad Request"})
+    }
+  }
+
+  async signin(req:Request ,res:Response){ 
+    
+    try{
+      const email = req.body.email
+      const foundUser = await this.prisma.accounts.findUnique({where:{email}})
+      if(!foundUser){
+        throw new BadRequestException('Bad Request');
+      }
+      if(foundUser.SSN!=req.body.SSN){
+        throw new BadRequestException('Bad Request');
+      }
+      const token = await this.signRefreshToken(foundUser.id)
+      return res.status(201).send({token,time_stamp:new Date().toUTCString()})
+    }
+    catch{
+      return res.status(400).send({message:"Badasd Request"})
     }
   }
 

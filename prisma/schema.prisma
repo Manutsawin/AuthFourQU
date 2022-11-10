@@ -31,7 +31,7 @@ model Accounts{
   BoD DateTime
   phone String 
   citizenship String 
-  email String 
+  email String @unique
   title String 
   country String
   isVerified Boolean @default(false) 
