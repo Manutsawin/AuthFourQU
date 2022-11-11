@@ -9,8 +9,6 @@ import { Request,Response } from 'express';
 import { OtpService } from '../otp/otp.service';
 import { JwtRefreshService } from '../jwt-refresh/jwt-refresh.service';
 
-
-
 @Injectable()
 export class AuthService {
   constructor(private prisma : PrismaService,private jwt:JwtService,private jwtRefresh:JwtRefreshService,private readonly otpService: OtpService){}
@@ -186,7 +184,8 @@ export class AuthService {
   async getUserInformation(req:Request ,res:Response){
     try{
       const payload = await this.validateAccessToken(req.body.token)
-      const foundUser = await this.prisma.account.findUnique({ where: payload.id })
+      const foundUser = await this.prisma.accounts.findUnique({ where: {id:payload.id} })
+      
       if(!foundUser){
         new BadRequestException('not authorized')
       }
