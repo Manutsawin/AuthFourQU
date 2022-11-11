@@ -1,23 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Get, Injectable } from '@nestjs/common';
 import { Request,Response } from 'express';
 import { AuthService} from '../auth/auth.service'
 import { PrismaService } from 'prisma/prisma.service';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom, map, Observable } from 'rxjs';
+import { AxiosResponse } from 'axios';
 
 @Injectable()
 export class CentralService { 
 
-  constructor(private prisma : PrismaService,private auth:AuthService){}
+  constructor(private prisma : PrismaService,private auth:AuthService,private readonly httpService: HttpService){}
 
   async userPayment(req:Request ,res:Response){
         try{
             const payload = await this.auth.validateAccessToken(req.body.token)
             console.log("userPayment")
-            return res.status(200).send({payload})
+            const text =  await this.root();
+            console.log(text)
+            return res.status(200).send({text}) ;
         }
         catch{
           return res.status(400).send({message:"Bad Request"})
         } 
   }
+
+  @Get()
+  async root() {
+    return await lastValueFrom(this.httpService.get('http://localhost:3000/api/access/test').pipe(
+      map((res) => res.data)
+    ));
+  }
+
+  // async find(){
+  //   // return this.httpService.get('http://localhost:3000/api/access/test').pipe(
+  //   //   map(response => response)
+  //   // );
+  //   const response = await (await this.httpService.get('http://localhost:3000/api/access/test');
+  //   return response.data;
+  // }
 
   async shopPayment(req:Request ,res:Response){
         try{
@@ -55,4 +75,9 @@ export class CentralService {
           return res.status(400).send({message:"Bad Request"})
         } 
   }
+  async test(req:Request ,res:Response){
+    
+    return res.status(200).send({message:"test"})
+    
+}
 }

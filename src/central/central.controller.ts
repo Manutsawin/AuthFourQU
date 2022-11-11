@@ -25,4 +25,9 @@ export class CentralController {
     this.centralService.shopStatement(req,res)
   }
 
+  @Get('test')
+  getTest(@Req() req, @Res() res) {
+    this.centralService.test(req,res)
+  }
+
 }

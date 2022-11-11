@@ -13,7 +13,7 @@ import {jwtSecretAcess} from '../utils/constants';
   imports:[
     JwtModule.register({
       secret:jwtSecretAcess,
-      signOptions:{ expiresIn:'60s'}
+      signOptions:{ expiresIn:'60m'}
     }),
     JwtRefreshModule,
     PrismaModule,
