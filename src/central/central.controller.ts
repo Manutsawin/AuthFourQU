@@ -25,9 +25,14 @@ export class CentralController {
     this.centralService.shopStatement(req,res)
   }
 
+  @Post('test')
+  postTest(@Req() req, @Res() res) {
+    this.centralService.testPost(req,res)
+  }
+
   @Get('test')
   getTest(@Req() req, @Res() res) {
-    this.centralService.test(req,res)
+    this.centralService.testGet(req,res)
   }
 
 }

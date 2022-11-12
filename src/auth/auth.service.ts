@@ -57,7 +57,7 @@ export class AuthService {
         }
       })
       
-      // await this.otpService.sendOTP(user.id)
+      await this.otpService.sendOTP(user.id,user.email)
 
       const token = await this.signRefreshToken(user.id)
       // return  res.status(201).send(user.id);
@@ -79,6 +79,20 @@ export class AuthService {
       if(foundUser.SSN!=req.body.SSN){
         throw new BadRequestException('Bad Request');
       }
+
+      console.log("signIn transaction api")
+
+
+      const bodyAct = {
+        "destEmail":foundUser.email,
+        "transactionID":"",
+        "accountID":foundUser.id,
+        "IPAddress":req.ip,
+        "timeStamp": new Date().toUTCString()
+      }
+      console.log("send email activity")
+      // const responseMail = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',bodyAct);
+
       const token = await this.signRefreshToken(foundUser.id)
       return res.status(201).send({token,time_stamp:new Date().toUTCString()})
     }
