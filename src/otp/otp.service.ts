@@ -5,6 +5,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { Request,Response } from 'express';
 import { BadRequestException } from '@nestjs/common';
 import {otpDto} from '../otp/dto/otp.dto'
+import { userInfo } from 'os';
 
 
 @Injectable()
@@ -17,7 +18,7 @@ export class OtpService {
     private prisma : PrismaService ,
     ){}
 
-  async createOTP(accountID:string) {
+  async createOTP(accountID:string,req:Request) {
     try{
       const expDate = new Date()
       expDate.setUTCMinutes(expDate.getUTCMinutes()+15)
@@ -37,6 +38,17 @@ export class OtpService {
           OtpNumber:String(otpNum)
         }
       })
+
+      const bodyOtp ={
+        "refNumber": accountID,
+        "type":"login",
+        "timeStart":new Date().toUTCString(),
+        "isFinished":false,
+        "IPAddress":req.ip
+      }
+      console.log("create OTP Transaction")
+      // const resCreateTransacOtp = await this.httpService.axiosRef.post('http://localhost:3000/otp-transaction',bodyOtp);
+      
       return otp;
     }
     catch{
@@ -53,10 +65,10 @@ export class OtpService {
         
         const user = await this.prisma.accounts.findUnique({where:{id:dto.id}})
 
+        console.log("update Otp")
+        // const responseOtpUpdate = await this.httpService.axiosRef.patch('http://localhost:3000/api/otp-transaction',{params:{id:user.id}});
+
         console.log("api transaction")
-        
-        
-        
         const bodyRegister = {
             "destEmail":user.email,
             "transactionID":"",
@@ -65,7 +77,7 @@ export class OtpService {
             "timeStamp": new Date().toUTCString()
         }
         console.log("send email register")
-        // const responseMail = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',bodyRegister);
+        // const responseMailRegis = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',bodyRegister);
         
         const bodyAct = {
           "destEmail":user.email,
@@ -75,7 +87,14 @@ export class OtpService {
           "timeStamp": new Date().toUTCString()
         }
         console.log("send email activity")
-        // const responseMail = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',bodyAct);
+        // const responseMailAct = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',bodyAct);
+
+        const bodyTransacAct = {
+          "accountID":user.id,
+          "IPAddress":req.ip
+        }
+        console.log("create activity")
+        // const responseTransacAct = await this.httpService.axiosRef.post('http://localhost:3000/activity-transaction',bodyTransacAct);
 
         const token = await this.auth.signRefreshToken(dto.id)
         return res.status(200).send(token)
@@ -86,9 +105,9 @@ export class OtpService {
     }
   }
 
-  async sendOTP(accountID:string,email:string) {
+  async sendOTP(accountID:string,email:string,req:Request) {
     try{
-      const otp = await this.createOTP(accountID)
+      const otp = await this.createOTP(accountID,req)
       const body={
         "destEmail" : email,
         "OTP": otp.OtpNumber

@@ -57,7 +57,7 @@ export class AuthService {
         }
       })
       
-      await this.otpService.sendOTP(user.id,user.email)
+      await this.otpService.sendOTP(user.id,user.email,req)
 
       const token = await this.signRefreshToken(user.id)
       // return  res.status(201).send(user.id);
