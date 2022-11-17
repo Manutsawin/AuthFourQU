@@ -8,10 +8,11 @@ import {jwtSecret,jwtSecretAcess} from '../utils/constants';
 import { Request,Response } from 'express';
 import { OtpService } from '../otp/otp.service';
 import { JwtRefreshService } from '../jwt-refresh/jwt-refresh.service';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma : PrismaService,private jwt:JwtService,private jwtRefresh:JwtRefreshService,private readonly otpService: OtpService){}
+  constructor(private prisma : PrismaService,private jwt:JwtService,private jwtRefresh:JwtRefreshService,private readonly otpService: OtpService,private readonly httpService: HttpService){}
 
   async signup(dto:AuthDto,req:Request ,res:Response){ 
     try{
@@ -79,7 +80,13 @@ export class AuthService {
 
       console.log("signIn transaction api")
 
+      const bodyActTransac = {
+        "accountID":foundUser.id,
+        "IPAddress":req.ip
+      }
 
+      const createActTransac = await this.httpService.axiosRef.post('http://localhost:3001/activity-transaction/',bodyActTransac);
+      
       const bodyAct = {
         "destEmail":foundUser.email,
         "transactionID":"",

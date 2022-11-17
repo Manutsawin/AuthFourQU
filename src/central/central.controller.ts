@@ -1,4 +1,4 @@
-import { Controller, Get, Post,Req,Res } from '@nestjs/common';
+import { Controller, Get, Post,Req,Res ,Patch} from '@nestjs/common';
 import { CentralService } from './central.service';
 
 @Controller('access')
@@ -30,7 +30,7 @@ export class CentralController {
     this.centralService.testPost(req,res)
   }
 
-  @Get('test')
+  @Patch('test')
   getTest(@Req() req, @Res() res) {
     this.centralService.testGet(req,res)
   }

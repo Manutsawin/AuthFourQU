@@ -49,7 +49,7 @@ export class OtpService {
         "IPAddress":req.ip
       }
       console.log("create OTP Transaction")
-      // const resCreateTransacOtp = await this.httpService.axiosRef.post('http://localhost:3000/otp-transaction',bodyOtp);
+      const resCreateTransacOtp = await this.httpService.axiosRef.post('http://localhost:3001/otp-transaction',bodyOtp);
       
       return otp;
     }
@@ -59,6 +59,9 @@ export class OtpService {
   }
  
   async checkOTP(dto:otpDto,req:Request ,res:Response) {
+
+    
+    
     try {
       
       const otp = await this.prisma.oTP.findFirst({where:{accountID:dto.id}})
@@ -71,7 +74,7 @@ export class OtpService {
         const user = await this.prisma.accounts.findUnique({where:{id:dto.id}})
 
         console.log("update Otp")
-        // const responseOtpUpdate = await this.httpService.axiosRef.patch('http://localhost:3000/api/otp-transaction',{params:{id:user.id}});
+        const qresponseOtpUpdate = await this.httpService.axiosRef.patch('http://localhost:3001/otp-transaction',{id:user.id});
 
         console.log("api transaction")
         const bodyRegister = {
@@ -94,12 +97,12 @@ export class OtpService {
         console.log("send email activity")
         const responseMailAct = await this.httpService.axiosRef.post('http://localhost:8090/email-notification/activity',bodyAct);
 
-        const bodyTransacAct = {
+        console.log("create activity")
+        const bodyActTransac = {
           "accountID":user.id,
           "IPAddress":req.ip
         }
-        console.log("create activity")
-        // const responseTransacAct = await this.httpService.axiosRef.post('http://localhost:3000/activity-transaction',bodyTransacAct);
+        const createActTransac = await this.httpService.axiosRef.post('http://localhost:3001/activity-transaction/',bodyActTransac);
 
         const token = await this.auth.signRefreshToken(dto.id)
         return res.status(200).send({token:token})

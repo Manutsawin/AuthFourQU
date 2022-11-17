@@ -88,7 +88,9 @@ export class CentralService {
   }
 
   async testGet(req:Request ,res:Response){
-    console.log(req.query.id)
+    console.log("access")
+    console.log(req.body.id)
     return res.status(200).send({message:"testGet"})
   }
+
 }

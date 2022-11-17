@@ -7,13 +7,15 @@ import { OtpModule } from '../otp/otp.module';
 import { JwtRefreshModule } from '../jwt-refresh/jwt-refresh.module';
 import { FileSystemStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import {jwtSecretAcess} from '../utils/constants';
+import { HttpModule } from '@nestjs/axios';
 
 
 @Module({
   imports:[
+    HttpModule,
     JwtModule.register({
       secret:jwtSecretAcess,
-      signOptions:{ expiresIn:'60m'}
+      signOptions:{ expiresIn:'360m'}
     }),
     JwtRefreshModule,
     PrismaModule,
