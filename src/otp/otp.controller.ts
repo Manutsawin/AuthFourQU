@@ -8,7 +8,7 @@ export class OtpController {
 
   @Post('create')
   create(@Req() req, @Res() res) {
-    return this.otpService.createOTP(req.body.id);
+    return this.otpService.createOTP(req.body.id,req);
   }
 
   @Post('check')

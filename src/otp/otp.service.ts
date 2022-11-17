@@ -6,16 +6,17 @@ import { Request,Response } from 'express';
 import { BadRequestException } from '@nestjs/common';
 import {otpDto} from '../otp/dto/otp.dto'
 import { userInfo } from 'os';
+import { HttpService } from '@nestjs/axios';
 
 
 @Injectable()
 export class OtpService {
-  httpService: any;
-  
+ 
   constructor(
     @Inject(forwardRef(() => AuthService))
     private auth : AuthService ,
     private prisma : PrismaService ,
+    private readonly httpService: HttpService
     ){}
 
   async createOTP(accountID:string,req:Request) {
@@ -24,11 +25,12 @@ export class OtpService {
       expDate.setUTCMinutes(expDate.getUTCMinutes()+15)
       var otpNum = await this.randomOTP()
       var OtpNumber = String(otpNum)
-      var duplicate = await this.prisma.oTP.findMany({where:{OtpNumber}})
+      var duplicate = await this.prisma.oTP.findFirst({where:{OtpNumber}})
+      console.log("Access")
       while(duplicate){
         otpNum = await this.randomOTP()
         OtpNumber = String(otpNum)
-        duplicate = await this.prisma.oTP.findMany({where:{OtpNumber}})
+        duplicate = await this.prisma.oTP.findFirst({where:{OtpNumber}})
       }
   
       const otp= await this.prisma.oTP.create({
@@ -58,11 +60,14 @@ export class OtpService {
  
   async checkOTP(dto:otpDto,req:Request ,res:Response) {
     try {
-      const otp = await this.prisma.oTP.findUnique({where:dto})
+      
+      const otp = await this.prisma.oTP.findFirst({where:{accountID:dto.id}})
+      
       if(otp.OtpNumber==dto.OtpNumber){
         await this.auth.UserIsVerified(dto.id)
-        await this.prisma.oTP.delete({ where: dto})
-        
+        console.log(otp)
+        await this.prisma.oTP.delete({ where:{id:otp.id}})
+        console.log("deleted")
         const user = await this.prisma.accounts.findUnique({where:{id:dto.id}})
 
         console.log("update Otp")
@@ -77,7 +82,7 @@ export class OtpService {
             "timeStamp": new Date().toUTCString()
         }
         console.log("send email register")
-        // const responseMailRegis = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',bodyRegister);
+        const responseMailRegis = await this.httpService.axiosRef.post('http://localhost:8090/email-notification/welcome',bodyRegister);
         
         const bodyAct = {
           "destEmail":user.email,
@@ -87,7 +92,7 @@ export class OtpService {
           "timeStamp": new Date().toUTCString()
         }
         console.log("send email activity")
-        // const responseMailAct = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',bodyAct);
+        const responseMailAct = await this.httpService.axiosRef.post('http://localhost:8090/email-notification/activity',bodyAct);
 
         const bodyTransacAct = {
           "accountID":user.id,
@@ -97,27 +102,30 @@ export class OtpService {
         // const responseTransacAct = await this.httpService.axiosRef.post('http://localhost:3000/activity-transaction',bodyTransacAct);
 
         const token = await this.auth.signRefreshToken(dto.id)
-        return res.status(200).send(token)
+        return res.status(200).send({token:token})
       }
-      return res.status(304).send({message:'not found'})
+      return res.status(304).send({message:'Not found'})
     } catch (error) {
-      throw new BadRequestException('not authorized')
+      throw new BadRequestException('Not found')
     }
   }
 
   async sendOTP(accountID:string,email:string,req:Request) {
+    
     try{
+      
       const otp = await this.createOTP(accountID,req)
       const body={
         "destEmail" : email,
         "OTP": otp.OtpNumber
       }
-      console.log("sendOTp")
-      // const responseMail = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',body);
+      const responseMail = await this.httpService.axiosRef.post('http://localhost:8090/email-notification/otp',body);
       //send otp to mail
+      return responseMail
     }
     catch(error){
       throw new BadRequestException("can't send otp")
+      return
     }
     
   }

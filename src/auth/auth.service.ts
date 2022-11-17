@@ -56,12 +56,9 @@ export class AuthService {
           road:road,      
         }
       })
-      
       await this.otpService.sendOTP(user.id,user.email,req)
-
-      const token = await this.signRefreshToken(user.id)
-      // return  res.status(201).send(user.id);
-      return res.status(201).send({token,time_stamp:new Date().toUTCString()})
+      console.log("finished send otp to mail")
+      return res.status(201).send({message:"waiting for confirmation",id:user.id,time_stamp:new Date().toUTCString()})
     }
     catch{
       return res.status(400).send({message:"Bad Request"})
