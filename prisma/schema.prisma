@@ -99,7 +99,7 @@ model shop{
 
 model shopAddress{
   shopID String @unique @default(uuid())
-  gaID String @unique
+  gaID String 
   houseNO String
   village String
   lane String

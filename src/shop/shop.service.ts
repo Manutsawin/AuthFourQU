@@ -14,39 +14,43 @@ export class ShopService {
     try{
       const {accountID,shopName,bussinessType,createdDate,salesPerYear,gaID,houseNO,village,lane,road} = dto
       const d = new Date() //test time
-
+      
       const account = await this.prisma.accounts.findUnique({where:{id:accountID}})
-
       const shop = await this.prisma.shop.create({
         data:{
-          accountID,
-          shopName,
-          bussinessType,
+          accountID:accountID,
+          shopName:shopName,
+          bussinessType:bussinessType,
           createdDate:d, //must edit later
-          salesPerYear,
+          salesPerYear:salesPerYear,
         }
       })
       
+
       await this.prisma.shopAddress.create({
         data:{
           shopID:shop.id,
-          gaID,
-          houseNO,
-          village,
-          lane,
-          road,
+          gaID:gaID,
+          houseNO:houseNO,
+          village:village,
+          lane:lane,
+          road:road,
         }
       })
+
+      
 
       const bodymail = {  
         "destEmail" : account.email,
         "name" : account.firstName,
         "shopName" : shop.shopName
       }
+     
+      
+      const mailShop = await this.httpService.axiosRef.post('http://192.168.1.38:8090/email-notification/shop-registered',bodymail);
+     
 
-      const mailShop = await this.httpService.axiosRef.post('192.168.1.38:8090/email-notification/shop-registered',bodymail);
-
-      return res.status(201).send({shop,time_stamp:new Date().toUTCString()})
+      return res.status(201).send({shop:shop,time_stamp:new Date().toUTCString()})
     }
     catch{
       return res.status(400).send({message:"can't create"})
