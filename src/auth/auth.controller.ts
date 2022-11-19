@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import {AddressDto} from'./dto/address.dto';
 import {  FormDataRequest } from 'nestjs-form-data';
-import { FormDataTestDto } from './dto/image.dto';
+import { ImgDto } from './dto/image.dto';
 import * as fs from 'fs';
 
 
@@ -44,7 +44,7 @@ export class AuthController {
 
   @Put('editPicProfile')
   @FormDataRequest()
-  async editProfilePic( @Req() req, @Res() res,@Body() dto: FormDataTestDto){
+  async editProfilePic( @Req() req, @Res() res,@Body() dto: ImgDto){
     const edited = await this.authService.editPic(req, res,dto.image.path.toString())
     if(edited){
       return res.status(200).send({message:"edited"})
@@ -56,5 +56,10 @@ export class AuthController {
   @Get('img/:imgpath')
   async seeUploadedFile(@Param('imgpath')image,@Res() res){
     return await res.sendFile(image,{root:'public'})
+  }
+
+  @Get('globalAddress')
+  async getGlobalAddress(@Req() req, @Res() res){
+    return await this.authService.getGlobalAddress(req,res)
   }
 }

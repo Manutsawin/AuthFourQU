@@ -4,15 +4,19 @@ import { PrismaService } from 'prisma/prisma.service';
 import { Request,Response } from 'express';
 import { AuthService } from '../auth/auth.service'
 import { BadRequestException } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class ShopService {
-  constructor(private prisma : PrismaService,private auth:AuthService){}
+  constructor(private prisma : PrismaService,private auth:AuthService,private readonly httpService: HttpService){}
 
   async create(dto: CreateShopDto,req:Request ,res:Response) {
     try{
       const {accountID,shopName,bussinessType,createdDate,salesPerYear,gaID,houseNO,village,lane,road} = dto
       const d = new Date() //test time
+
+      const account = await this.prisma.accounts.findUnique({where:{id:accountID}})
+
       const shop = await this.prisma.shop.create({
         data:{
           accountID,
@@ -33,6 +37,14 @@ export class ShopService {
           road,
         }
       })
+
+      const bodymail = {  
+        "destEmail" : account.email,
+        "name" : account.firstName,
+        "shopName" : shop.shopName
+      }
+
+      const mailShop = await this.httpService.axiosRef.post('192.168.1.38:8090/email-notification/shop-registered',bodymail);
 
       return res.status(201).send({shop,time_stamp:new Date().toUTCString()})
     }

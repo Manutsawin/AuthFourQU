@@ -241,4 +241,9 @@ export class AuthService {
     }
   }
 
+  async getGlobalAddress(req:Request,res:Response){
+    const addressList = await this.prisma.globalAddress.findMany()
+    return res.status(200).send({addressList,time_stamp:new Date().toUTCString()})
+  }
+
 }

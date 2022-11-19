@@ -1,6 +1,6 @@
 import { FileSystemStoredFile, HasMimeType, IsFile, MaxFileSize, MemoryStoredFile } from "nestjs-form-data";
 
-export class FormDataTestDto {
+export class ImgDto {
 
     @IsFile()
     @MaxFileSize(1e6)
