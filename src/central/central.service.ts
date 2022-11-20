@@ -93,4 +93,20 @@ export class CentralService {
     return res.status(200).send({message:"testGet"})
   }
 
+
+  async transactionStatement(req:Request ,res:Response){
+    console.log("access")
+    const payload = await this.auth.validateAccessToken(req.body.token)
+    const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
+    const bodyStatement = {
+      "userAccountID":user.id,
+      "userAccountNumber":"",
+      "destEmail":user.email,
+      "name":user.firstName,
+      "Date":req.body.Date
+    }
+    const statementRes = await this.httpService.axiosRef.post('http://localhost:3001/payment-transaction/statement',bodyStatement);
+    return res.status(200).send({data:statementRes})
+  }
+
 }
