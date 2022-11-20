@@ -6,7 +6,7 @@ import { AuthService } from '../auth/auth.service'
 import { BadRequestException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { payload } from '../auth/jwt.strategy';
-
+import { PAYMENT_SERVICE_URL } from 'src/httpConfig';
 
 @Injectable()
 export class ShopService {
@@ -14,6 +14,9 @@ export class ShopService {
 
   async create(dto: CreateShopDto,req:Request ,res:Response) {
     try{
+
+      
+      const payload = await this.auth.validateAdminToken(req.headers.authorization.split(" ")[1])
       const {accountID,shopName,bussinessType,createdDate,salesPerYear,gaID,houseNO,village,lane,road} = dto
       const d = new Date() //test time
       
@@ -40,7 +43,11 @@ export class ShopService {
         }
       })
 
-      
+      const bodyCreateShopPayment = {
+        "shopID":shop.id,
+        "callbackURL":req.body.callbackURL
+      }
+      const createShopPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/shop-payment/create`,bodyCreateShopPayment);
 
       const bodymail = {  
         "destEmail" : account.email,
@@ -61,7 +68,6 @@ export class ShopService {
     
   }
 
-  
   async getInformation(req:Request ,res:Response){
     try {
       const payload = req.user as payload

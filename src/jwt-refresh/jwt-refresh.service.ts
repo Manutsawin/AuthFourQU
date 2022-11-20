@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import {jwtSecret} from '../utils/constants';
+import {jwtSecret,jwtSecretAdmin} from '../utils/constants';
 @Injectable()
 export class JwtRefreshService {
 
@@ -9,4 +9,9 @@ export class JwtRefreshService {
   async signRefreshToken(payload:any){
     return await this.jwt.signAsync(payload,{secret:jwtSecret})
   }
+
+  async signRefreshTokenAdmin(payload:any){
+    return await this.jwt.signAsync(payload,{secret:jwtSecretAdmin})
+  }
+
 }

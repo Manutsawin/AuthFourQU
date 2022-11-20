@@ -108,3 +108,17 @@ model shopAddress{
   updated_at DateTime @updatedAt
   deleted_at DateTime? 
 }
+
+model admin{
+  id String @unique @default(uuid())
+  firstName String 
+  middleName String 
+  lastName String
+  password String
+  phone String 
+  email String @unique
+  isVerified Boolean @default(false) 
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime? 
+} 

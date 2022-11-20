@@ -4,12 +4,13 @@ import { Accounts} from '@prisma/client';
 import { AuthDto } from './dto/auth.dto';
 import { AddressDto } from './dto/address.dto';
 import { JwtService } from '@nestjs/jwt';
-import {jwtSecret,jwtSecretAcess} from '../utils/constants';
+import {jwtSecret,jwtSecretAcess,jwtSecretAdmin} from '../utils/constants';
 import { Request,Response } from 'express';
 import { OtpService } from '../otp/otp.service';
 import { JwtRefreshService } from '../jwt-refresh/jwt-refresh.service';
 import { HttpService } from '@nestjs/axios';
 import { payload } from './jwt.strategy';
+import { PAYMENT_SERVICE_URL } from 'src/httpConfig';
 
 @Injectable()
 export class AuthService {
@@ -58,11 +59,17 @@ export class AuthService {
           road:road,      
         }
       })
-      // await this.otpService.sendOTP(user.id,user.email,req)
-      // console.log("finished send otp to mail")
 
-      const token = await this.signRefreshToken(user.id)
-      return res.status(201).send({token:token,id:user.id,time_stamp:new Date().toUTCString()})
+      const bodyCreatePayment = {
+        "accountID":user.id,
+      }
+      const createPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/user-payment/create`,bodyCreatePayment);
+
+      await this.otpService.sendOTP(user.id,user.email,req)
+      console.log("finished send otp to mail")
+
+      // const token = await this.signRefreshToken(user.id)
+      // return res.status(201).send({token:token,id:user.id,time_stamp:new Date().toUTCString()})
 
       return res.status(201).send({message:"waiting for confirmation",id:user.id,time_stamp:new Date().toUTCString()})
     }
@@ -90,15 +97,15 @@ export class AuthService {
         "IPAddress":req.ip
       }
 
-      const createActTransac = await this.httpService.axiosRef.post('http://localhost:3001/activity-transaction/',bodyActTransac);
+      // const createActTransac = await this.httpService.axiosRef.post('http://localhost:3001/activity-transaction/',bodyActTransac);
       
-      const bodyAct = {
-        "destEmail":foundUser.email,
-        "transactionID":"",
-        "accountID":foundUser.id,
-        "IPAddress":req.ip,
-        "timeStamp": new Date().toUTCString()
-      }
+      // const bodyAct = {
+      //   "destEmail":foundUser.email,
+      //   "transactionID":"",
+      //   "accountID":foundUser.id,
+      //   "IPAddress":req.ip,
+      //   "timeStamp": new Date().toUTCString()
+      // }
       console.log("send email activity")
       // const responseMail = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',bodyAct);
 
@@ -244,6 +251,59 @@ export class AuthService {
   async getGlobalAddress(req:Request,res:Response){
     const addressList = await this.prisma.globalAddress.findMany()
     return res.status(200).send({addressList,time_stamp:new Date().toUTCString()})
+  }
+
+  async adminSignUp(req:Request,res:Response){
+    try{
+      const {firstName,middleName,lastName,password,phone,email} = req.body
+      const admin = await this.prisma.admin.create({
+        data:{
+          firstName,
+          middleName,
+          lastName,
+          password,
+          phone,
+          email
+        }
+      })
+      return res.status(201).send({id:admin.id})
+    }
+    catch{
+      return res.status(400).send({message:"Bad Request"})
+    }
+  }
+
+  async adminLogin(req:Request,res:Response){
+    try{
+      const admin = await this.prisma.admin.findUnique({where:{email:req.body.email}})
+      if(admin.password==req.body.password){
+        const payload = {
+          "id":admin.id,
+          "time_stamp":new Date().toUTCString()
+        }
+        const token = await this.jwtRefresh.signRefreshTokenAdmin(payload)
+
+        return res.status(201).send({"token":token})
+      }
+      return res.status(400).send({message:"Bad Request"})
+    }
+    catch{
+      return res.status(400).send({message:"Bad Request"})
+    }
+  }
+
+  async validateAdminToken(token:string){
+    try {
+      const payload = await this.jwt.verify(token,{secret:jwtSecretAdmin})
+      
+      if(!payload){
+        throw new BadRequestException('not authorized')
+      }
+  
+      return  payload
+    } catch (error) {
+      throw new BadRequestException('not authorized')
+    } 
   }
 
 }

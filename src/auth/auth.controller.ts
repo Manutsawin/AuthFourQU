@@ -63,4 +63,14 @@ export class AuthController {
     return await res.sendFile(image,{root:'public'})
   }
 
+
+  @Post('adminSignup')
+  adminSignup( @Req() req, @Res() res) {
+    return this.authService.adminSignUp(req,res);
+  }
+
+  @Post('adminSignin')
+  adminSignin( @Req() req, @Res() res) {
+    return this.authService.adminLogin(req,res);
+  }
 }
