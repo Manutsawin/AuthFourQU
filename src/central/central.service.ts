@@ -3,6 +3,7 @@ import { Request,Response } from 'express';
 import { AuthService} from '../auth/auth.service'
 import { PrismaService } from 'prisma/prisma.service';
 import { HttpService } from '@nestjs/axios';
+import { payload } from '../auth/jwt.strategy';
 import { lastValueFrom, map, Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
 
@@ -13,7 +14,7 @@ export class CentralService {
 
   async userPayment(req:Request ,res:Response){
         try{
-            const payload = await this.auth.validateAccessToken(req.body.token)
+          const payload = req.user as payload
             console.log("userPayment")
             const response = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',req.body);
             console.log(response.data)
@@ -26,7 +27,7 @@ export class CentralService {
 
   async shopPayment(req:Request ,res:Response){
         try{
-          const payload = await this.auth.validateAccessToken(req.body.token)
+          const payload = req.user as payload
           const accountID = payload.id
           const shop = this.prisma.shop.findUnique({where:{accountID}})
           console.log("shopPayment")
@@ -41,15 +42,16 @@ export class CentralService {
 
   async statement(req:Request ,res:Response){
         try{
-            const payload = await this.auth.validateAccessToken(req.body.token)
+          const payload = req.user as payload
             console.log("userStatement")
-            const response = await  this.httpService.axiosRef.get('http://localhost:3000/api/access/test',{
-              params:{
-                id:payload.id,
-              }
-            });
-            console.log(response.data)
-            return res.status(200).send(response.data) ;
+            // const response = await  this.httpService.axiosRef.get('http://localhost:3000/api/access/test',{
+            //   params:{
+            //     id:payload.id,
+            //   }
+            // });
+            // console.log(response.data)
+            // return res.status(200).send(response.data) ;
+            return res.status(200).send({message:"test"}) ;
         }
         catch{
           return res.status(400).send({message:"Bad Request"})
@@ -58,7 +60,7 @@ export class CentralService {
 
   async shopStatement(req:Request ,res:Response){
         try{
-          const payload = await this.auth.validateAccessToken(req.body.token)
+          const payload = req.user as payload
           const accountID = payload.id
           const shop = await this.prisma.shop.findUnique({where:{accountID}})
           console.log("getShopStatement")

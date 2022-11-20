@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Req,Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Req,Res, UseGuards } from '@nestjs/common';
 import { ShopService } from './shop.service';
 import { CreateShopDto } from './dto/create-shop.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('shop')
 export class ShopController {
@@ -11,8 +12,9 @@ export class ShopController {
     return this.shopService.create(dto,req,res);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('information')
-  getInformation(@Body()dto:CreateShopDto,@Req() req, @Res() res) {
+  getInformation(@Req() req, @Res() res) {
     return this.shopService.getInformation(req,res)
   }
 

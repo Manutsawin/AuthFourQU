@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable} from '@nestjs/common';
 import { CreateShopDto } from './dto/create-shop.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { Request,Response } from 'express';
 import { AuthService } from '../auth/auth.service'
 import { BadRequestException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { payload } from '../auth/jwt.strategy';
+
 
 @Injectable()
 export class ShopService {
@@ -59,13 +61,11 @@ export class ShopService {
     
   }
 
+  
   async getInformation(req:Request ,res:Response){
     try {
-      const payload = await this.auth.validateAccessToken(req.body.token)
-      if(!payload){
-        new BadRequestException('not authorized')
-      }
-      const shop = await this.prisma.shop.findUnique(payload.id)
+      const payload = req.user as payload
+      const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
       const data = {
         id:shop.id,
         acountID:shop.accountID,
