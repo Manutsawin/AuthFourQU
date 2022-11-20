@@ -9,6 +9,7 @@ import { Request,Response } from 'express';
 import { OtpService } from '../otp/otp.service';
 import { JwtRefreshService } from '../jwt-refresh/jwt-refresh.service';
 import { HttpService } from '@nestjs/axios';
+import { payload } from './jwt.strategy';
 
 @Injectable()
 export class AuthService {
@@ -57,8 +58,12 @@ export class AuthService {
           road:road,      
         }
       })
-      await this.otpService.sendOTP(user.id,user.email,req)
-      console.log("finished send otp to mail")
+      // await this.otpService.sendOTP(user.id,user.email,req)
+      // console.log("finished send otp to mail")
+
+      const token = await this.signRefreshToken(user.id)
+      return res.status(201).send({token:token,id:user.id,time_stamp:new Date().toUTCString()})
+
       return res.status(201).send({message:"waiting for confirmation",id:user.id,time_stamp:new Date().toUTCString()})
     }
     catch{
@@ -109,7 +114,7 @@ export class AuthService {
 
     try{
       const {gaID,houseNo,village,lane}=dto
-      const payload = await this.validateAccessToken(req.headers.authorization.split(' ')[1])
+      const payload = req.user as payload
       const foundUser = await this.prisma.account.findUnique({ where: payload.id })
 
       await foundUser.update({
@@ -157,12 +162,9 @@ export class AuthService {
     const user = await this.prisma.accounts.findUnique({where:{id}})
     const payload = {
       id:user.id,
-      LaserID:user.LaserID,
-      SSN:user.SSN,
       firstName:user.firstName,
       middleName:user.middleName,
       lastName:user.lastName,
-      citizenship:user.citizenship,
       time_stamp:new Date().toISOString()
     }
     return await this.jwtRefresh.signRefreshToken(payload)
@@ -171,15 +173,12 @@ export class AuthService {
 
   async signAcessToken(req:Request ,res:Response){
     const payload = await this.validateRefreshToken(req.body.token)
-    const {id,LaserID,SSN,firstName,middleName,lastName,citizenship} = payload
+    const {id,firstName,middleName,lastName} = payload
     const data = {
       id,
-      LaserID,
-      SSN,
       firstName,
       middleName,
       lastName,
-      citizenship,
       time_stamp: new Date().toISOString()
     }
     const token = await this.jwt.signAsync(data,{secret:jwtSecretAcess})
@@ -201,7 +200,8 @@ export class AuthService {
 
   async getUserInformation(req:Request ,res:Response){
     try{
-      const payload = await this.validateAccessToken(req.body.token)
+
+      const payload = req.user as payload
       const foundUser = await this.prisma.accounts.findUnique({ where: {id:payload.id} })
       
       if(!foundUser){
@@ -226,7 +226,7 @@ export class AuthService {
 
   async editPic(req:Request ,res:Response,path:string){
     try{
-      const payload = await this.jwt.verify(req.body.token, { secret: jwtSecretAcess })
+      const payload = req.user as payload
       const foundUser = await this.prisma.accounts.update({
         where:{id:payload.id},
         data:{ pictureProfile : path }

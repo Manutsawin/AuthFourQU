@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Body, Param, Req,Res, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Req,Res, Put, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
 import {AddressDto} from'./dto/address.dto';
 import {  FormDataRequest } from 'nestjs-form-data';
 import { ImgDto } from './dto/image.dto';
 import * as fs from 'fs';
+import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from './jwt-auth.guard';
+
 
 
 @Controller('auth')
@@ -15,7 +18,8 @@ export class AuthController {
   signup(@Body()dto:AuthDto,@Req() req, @Res() res) {
     return this.authService.signup(dto,req,res);
   }
-
+  
+  
   @Post('signin')
   ReqAccessToken( @Req() req, @Res() res) {
     return this.authService.signAcessToken(req,res);
@@ -25,23 +29,25 @@ export class AuthController {
   signInEmail( @Req() req, @Res() res) {
     return this.authService.signin(req,res);
   }
+
+  @Get('globalAddress')
+  async getGlobalAddress(@Req() req, @Res() res){
+    return await this.authService.getGlobalAddress(req,res)
+  }
   
+  @UseGuards(JwtAuthGuard)
   @Post('updateCurrentAddress')
   updateCurrentAddress(@Body()dto:AddressDto ,@Req() req, @Res() res){
     return this.authService.updateCurrentAddress(dto,req,res)
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('information')
   getInformation( @Req() req, @Res() res){
     return this.authService.getUserInformation(req,res)
   }
 
-  @Post('token')//test
-  async validateAcessToken( @Req() req, @Res() res) {
-    const payload = await this.authService.validateAccessToken(req.body.token)
-    return res.status(200).send({payload});
-  }
-
+  @UseGuards(JwtAuthGuard)
   @Put('editPicProfile')
   @FormDataRequest()
   async editProfilePic( @Req() req, @Res() res,@Body() dto: ImgDto){
@@ -53,13 +59,10 @@ export class AuthController {
     return res.status(400).send({message:"can't edited"})
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('img/:imgpath')
   async seeUploadedFile(@Param('imgpath')image,@Res() res){
     return await res.sendFile(image,{root:'public'})
   }
 
-  @Get('globalAddress')
-  async getGlobalAddress(@Req() req, @Res() res){
-    return await this.authService.getGlobalAddress(req,res)
-  }
 }

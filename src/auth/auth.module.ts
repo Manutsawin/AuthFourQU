@@ -8,14 +8,16 @@ import { JwtRefreshModule } from '../jwt-refresh/jwt-refresh.module';
 import { FileSystemStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import {jwtSecretAcess} from '../utils/constants';
 import { HttpModule } from '@nestjs/axios';
-
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports:[
     HttpModule,
+    PassportModule,
     JwtModule.register({
       secret:jwtSecretAcess,
-      signOptions:{ expiresIn:'360m'}
+      signOptions:{ expiresIn:'360s'}
     }),
     JwtRefreshModule,
     PrismaModule,
@@ -27,7 +29,7 @@ import { HttpModule } from '@nestjs/axios';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService,JwtStrategy],
   exports:[AuthService],
 })
 export class AuthModule {
