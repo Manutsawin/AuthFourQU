@@ -17,11 +17,18 @@ export class CentralService {
   async statement(req:Request ,res:Response){
         try{
           const payload = req.user as payload
+          const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
             console.log("userStatement")
-            const response = await  this.httpService.axiosRef.get(`http://localhost:3000/api/access/test/${payload.id}`);
+            const response = await  this.httpService.axiosRef.post(`payment-transaction/statement`,{
+              "userAccountID": payload.id,
+              "userAccountNumber":"",
+              "sourceEmail":req.body.destEmail,
+              "destEmail":"",
+              "name":user.firstName,
+              "Date":req.body.Date
+            });
             console.log(response.data)
             return res.status(200).send(response.data) ;
-            return res.status(200).send({message:"test"}) ;
         }
         catch{
           return res.status(400).send({message:"Bad Request"})

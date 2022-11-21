@@ -17,7 +17,6 @@ export class AuthController {
     return this.authService.signup(dto,req,res);
   }
   
-  
   @Post('signin')
   ReqAccessToken( @Req() req, @Res() res) {
     return this.authService.signAcessToken(req,res);
@@ -62,7 +61,6 @@ export class AuthController {
   async seeUploadedFile(@Param('imgpath')image,@Res() res){
     return await res.sendFile(image,{root:'public'})
   }
-
 
   @Post('adminSignup')
   adminSignup( @Req() req, @Res() res) {

@@ -17,7 +17,7 @@ import { JwtStrategy } from './jwt.strategy';
     PassportModule,
     JwtModule.register({
       secret:jwtSecretAcess,
-      signOptions:{ expiresIn:'360s'}
+      signOptions:{ expiresIn:'15m'}
     }),
     JwtRefreshModule,
     PrismaModule,

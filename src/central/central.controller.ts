@@ -6,18 +6,6 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class CentralController {
   constructor(private readonly centralService: CentralService) {}
   
-  // @UseGuards(JwtAuthGuard)
-  // @Post('userPayment')
-  // userPayment( @Req() req, @Res() res){
-  //   return this.centralService.userPayment(req,res)
-  // }
-
-  // @UseGuards(JwtAuthGuard)
-  // @Post('shopPayment')
-  // shopPayment( @Req() req, @Res() res){
-  //   this.centralService.shopPayment(req,res)
-  // }
-
   @UseGuards(JwtAuthGuard)
   @Get('userStatement')
   getStatement( @Req() req, @Res() res){
