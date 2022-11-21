@@ -115,7 +115,7 @@ export class AuthService {
       return res.status(201).send({token,time_stamp:new Date().toUTCString()})
     }
     catch{
-      return res.status(400).send({message:"Badasd Request"})
+      return res.status(400).send({message:"Bad Request"})
     }
   }
 
@@ -346,8 +346,5 @@ export class AuthService {
     }
     
   }
-
-  
-  
 
 }
