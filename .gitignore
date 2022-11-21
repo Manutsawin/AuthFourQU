@@ -2,8 +2,10 @@
 /dist
 /node_modules
 .env
+/*.env
 
-
+npm-debug.log
+.DS_Store
 # Logs
 logs
 *.log
