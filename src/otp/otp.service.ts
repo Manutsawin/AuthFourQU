@@ -85,7 +85,7 @@ export class OtpService {
             "timeStamp": new Date().toUTCString()
         }
         console.log("send email register")
-        const responseMailRegis = await this.httpService.axiosRef.post('http://localhost:8090/email-notification/welcome',bodyRegister);
+        const responseMailRegis = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/welcome',bodyRegister);
         
         const bodyAct = {
           "destEmail":user.email,
@@ -95,7 +95,7 @@ export class OtpService {
           "timeStamp": new Date().toUTCString()
         }
         console.log("send email activity")
-        const responseMailAct = await this.httpService.axiosRef.post('http://localhost:8090/email-notification/activity',bodyAct);
+        const responseMailAct = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/activity',bodyAct);
 
         console.log("create activity")
         const bodyActTransac = {
@@ -122,7 +122,7 @@ export class OtpService {
         "destEmail" : email,
         "OTP": otp.OtpNumber
       }
-      const responseMail = await this.httpService.axiosRef.post('http://localhost:8090/email-notification/otp',body);
+      const responseMail = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/otp',body);
       //send otp to mail
       return responseMail
     }

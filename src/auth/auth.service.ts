@@ -94,8 +94,6 @@ export class AuthService {
         throw new BadRequestException('Bad Request');
       }
 
-      console.log("signIn transaction api")
-
       const bodyActTransac = {
         "accountID":foundUser.id,
         "IPAddress":req.ip
@@ -103,15 +101,15 @@ export class AuthService {
 
       // const createActTransac = await this.httpService.axiosRef.post('http://localhost:3001/activity-transaction/',bodyActTransac);
       
-      // const bodyAct = {
-      //   "destEmail":foundUser.email,
-      //   "transactionID":"",
-      //   "accountID":foundUser.id,
-      //   "IPAddress":req.ip,
-      //   "timeStamp": new Date().toUTCString()
-      // }
-      console.log("send email activity")
-      // const responseMail = await this.httpService.axiosRef.post('http://localhost:3000/api/access/test',bodyAct);
+      const bodyAct = {
+        "destEmail":foundUser.email,
+        "transactionID":"",
+        "accountID":foundUser.id,
+        "IPAddress":req.ip,
+        "timeStamp": new Date().toUTCString()
+      }
+      
+      const responseMail = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/activity',bodyAct);
 
       const token = await this.signRefreshToken(foundUser.id)
       return res.status(201).send({token,time_stamp:new Date().toUTCString()})
