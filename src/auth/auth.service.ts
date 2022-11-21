@@ -179,17 +179,23 @@ export class AuthService {
   }
 
   async signAcessToken(req:Request ,res:Response){
-    const payload = await this.validateRefreshToken(req.body.token)
-    const {id,firstName,middleName,lastName} = payload
-    const data = {
+    try{
+      const payload = await this.validateRefreshToken(req.headers.authorization.split(" ")[1])
+      const {id,firstName,middleName,lastName} = payload
+      const data = {
       id,
       firstName,
       middleName,
       lastName,
       time_stamp: new Date().toISOString()
+      }
+      const token = await this.jwt.signAsync(data,{secret:jwtSecretAcess})
+      return res.status(200).send({token,time_stamp:new Date().toUTCString()})
     }
-    const token = await this.jwt.signAsync(data,{secret:jwtSecretAcess})
-    return res.status(200).send({token,time_stamp:new Date().toUTCString()})
+    catch{
+      return res.status(400).send({message:"Bad Request"})
+    }
+    
   }
 
   async UserIsVerified(id:string): Promise<Accounts>{
@@ -305,5 +311,28 @@ export class AuthService {
       throw new BadRequestException('not authorized')
     } 
   }
+
+  async changeRefreshToken(req:Request ,res:Response){
+    try{
+      const payload = await this.validateRefreshToken(req.headers.authorization.split(" ")[1])
+      const {id,firstName,middleName,lastName} = payload
+      const data = {
+        id,
+        firstName,
+        middleName,
+        lastName,
+        time_stamp: new Date().toISOString()
+      }
+      const token = await this.jwt.signAsync(data,{secret:jwtSecret})
+      return res.status(200).send({token,time_stamp:new Date().toUTCString()})
+    }
+    catch{
+      return res.status(400).send({message:"Bad Request"})
+    }
+    
+  }
+
+  
+  
 
 }

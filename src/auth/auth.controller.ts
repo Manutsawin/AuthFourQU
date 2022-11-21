@@ -71,4 +71,9 @@ export class AuthController {
   adminSignin( @Req() req, @Res() res) {
     return this.authService.adminLogin(req,res);
   }
+
+  @Post('changeRefreshToken')
+  signInNewRefreshToken( @Req() req, @Res() res) {
+    return this.authService.changeRefreshToken(req,res);
+  }
 }
