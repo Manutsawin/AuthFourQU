@@ -39,7 +39,10 @@ CREATE TABLE "accountCareer" (
 -- CreateTable
 CREATE TABLE "userAdress" (
     "accountID" TEXT NOT NULL,
-    "gaID" TEXT NOT NULL,
+    "postalCode" TEXT NOT NULL,
+    "province" TEXT NOT NULL,
+    "district" TEXT NOT NULL,
+    "subDistrict" TEXT NOT NULL,
     "houseNo" TEXT NOT NULL,
     "village" TEXT NOT NULL,
     "lane" TEXT NOT NULL,
@@ -88,11 +91,29 @@ CREATE TABLE "shop" (
 -- CreateTable
 CREATE TABLE "shopAddress" (
     "shopID" TEXT NOT NULL,
-    "gaID" TEXT NOT NULL,
+    "postalCode" TEXT NOT NULL,
+    "province" TEXT NOT NULL,
+    "district" TEXT NOT NULL,
+    "subDistrict" TEXT NOT NULL,
     "houseNO" TEXT NOT NULL,
     "village" TEXT NOT NULL,
     "lane" TEXT NOT NULL,
     "road" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "deleted_at" TIMESTAMP(3)
+);
+
+-- CreateTable
+CREATE TABLE "admin" (
+    "id" TEXT NOT NULL,
+    "firstName" TEXT NOT NULL,
+    "middleName" TEXT NOT NULL,
+    "lastName" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3)
@@ -132,4 +153,7 @@ CREATE UNIQUE INDEX "shop_accountID_key" ON "shop"("accountID");
 CREATE UNIQUE INDEX "shopAddress_shopID_key" ON "shopAddress"("shopID");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "shopAddress_gaID_key" ON "shopAddress"("gaID");
+CREATE UNIQUE INDEX "admin_id_key" ON "admin"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "admin_email_key" ON "admin"("email");
