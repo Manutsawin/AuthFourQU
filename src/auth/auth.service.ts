@@ -67,8 +67,8 @@ export class AuthService {
       const bodyCreatePayment = {
         "accountID":user.id,
       }
-      const createPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/user-payment/create`,bodyCreatePayment);
-
+      // const createPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/user-payment/create`,bodyCreatePayment);
+      console.log("sadas")
       await this.otpService.sendOTP(user.id,user.email,req)
       console.log("finished send otp to mail")
 

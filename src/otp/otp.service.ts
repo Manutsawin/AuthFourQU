@@ -118,12 +118,15 @@ export class OtpService {
     try{
       
       const otp = await this.createOTP(accountID,req)
+      console.log("beforeCreateBody")
       const body={
         "destEmail" : email,
         "OTP": otp.OtpNumber
       }
+      console.log("beforesendmail")
       const responseMail = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/otp',body);
       //send otp to mail
+      console.log("sendmail")
       return responseMail
     }
     catch(error){
