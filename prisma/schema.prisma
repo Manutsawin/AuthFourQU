@@ -7,8 +7,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgres://wvacdqxgzyegek:af439364726d94e4e2e77203e61241fad971804cb5eb4f9c8ba3935f8aa5ed50@ec2-34-231-42-166.compute-1.amazonaws.com:5432/d8scj5huql47q5"
-  shadowDatabaseUrl = "postgres://wvacdqxgzyegek:af439364726d94e4e2e77203e61241fad971804cb5eb4f9c8ba3935f8aa5ed50@ec2-34-231-42-166.compute-1.amazonaws.com:5432/d8scj5huql47q5"
+  url      = "postgres://taquorldjaeska:cf0de29ad6a93136f662f8390f6d9ed86aef323bc5ba9cbf4e2786fa1a864472@ec2-54-163-34-107.compute-1.amazonaws.com:5432/d99amkp7329dge"
+  shadowDatabaseUrl = "postgres://taquorldjaeska:cf0de29ad6a93136f662f8390f6d9ed86aef323bc5ba9cbf4e2786fa1a864472@ec2-54-163-34-107.compute-1.amazonaws.com:5432/d99amkp7329dge"
 }
 
 enum Carreer_types {
