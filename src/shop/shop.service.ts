@@ -72,11 +72,20 @@ export class ShopService {
     try {
       const payload = req.user as payload
       const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
+      const address = await this.prisma.shopAddress.findUnique({where:{shopID:shop.id}})
+      const {gaID,houseNO,village,lane,road}=address
       const data = {
         id:shop.id,
         acountID:shop.accountID,
         shopName:shop.shopName,
         bussinessType:shop.bussinessType,
+        address:{
+          gaID,
+          houseNO,
+          village,
+          lane,
+          road
+        }
       }
       return res.status(200).send({data,time_stamp:new Date().toUTCString()})
     } catch (error) {

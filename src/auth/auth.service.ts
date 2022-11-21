@@ -11,6 +11,7 @@ import { JwtRefreshService } from '../jwt-refresh/jwt-refresh.service';
 import { HttpService } from '@nestjs/axios';
 import { payload } from './jwt.strategy';
 import { PAYMENT_SERVICE_URL } from 'src/httpConfig';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -217,9 +218,8 @@ export class AuthService {
       const payload = req.user as payload
       const foundUser = await this.prisma.accounts.findUnique({ where: {id:payload.id} })
       
-      if(!foundUser){
-        new BadRequestException('not authorized')
-      }
+      const address = await this.prisma.userAdress.findUnique({where:{accountID:payload.id}})
+      const {gaID,houseNo,village,lane,road} = address
       const {firstName,middleName,lastName,BoD,phone,email,pictureProfile}=foundUser
       const data ={
         firstName,
@@ -228,7 +228,14 @@ export class AuthService {
         BoD,
         phone,
         email,
-        pictureProfile
+        pictureProfile,
+        address:{
+          gaID,
+          houseNo,
+          village,
+          lane,
+          road
+        }
       }
       return res.status(200).send({data,time_stamp:new Date().toUTCString()})
     }
@@ -262,17 +269,20 @@ export class AuthService {
   async adminSignUp(req:Request,res:Response){
     try{
       const {firstName,middleName,lastName,password,phone,email} = req.body
+      
+      const passhash = await bcrypt.hash(password,10)
+      
       const admin = await this.prisma.admin.create({
         data:{
           firstName,
           middleName,
           lastName,
-          password,
+          password:passhash,
           phone,
           email
         }
       })
-      return res.status(201).send({id:admin.id})
+      return res.status(201).send({id:admin.id,firstName:admin.firstName,middleName:admin.middleName,lastName:admin.lastName})
     }
     catch{
       return res.status(400).send({message:"Bad Request"})
@@ -282,7 +292,8 @@ export class AuthService {
   async adminLogin(req:Request,res:Response){
     try{
       const admin = await this.prisma.admin.findUnique({where:{email:req.body.email}})
-      if(admin.password==req.body.password){
+      const isMatch = await bcrypt.compare(req.body.password, admin.password);
+      if(isMatch){
         const payload = {
           "id":admin.id,
           "time_stamp":new Date().toUTCString()
