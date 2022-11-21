@@ -19,7 +19,7 @@ export class AuthService {
 
   async signup(dto:AuthDto,req:Request ,res:Response){ 
     try{
-      const {LaserID,SSN,firstName,middleName,lastName,BoD,phone,citizenship,email,title,country,salary,careerID,gaID,houseNO,village,lane,road}=dto
+      const {LaserID,SSN,firstName,middleName,lastName,BoD,phone,citizenship,email,title,country,salary,careerID,postalCode,province,district,subDistrict,houseNO,village,lane,road}=dto
       
       const foundSSN = await this.prisma.accounts.findUnique({where:{SSN}});
       if(foundSSN){
@@ -53,7 +53,10 @@ export class AuthService {
       await this.prisma.userAdress.create({
         data:{
           accountID:user.id,
-          gaID:gaID,
+          postalCode:postalCode,
+          province:province,
+          district:district,
+          subDistrict:subDistrict,
           houseNo:houseNO,
           village:village,
           lane:lane,
@@ -219,7 +222,7 @@ export class AuthService {
       const foundUser = await this.prisma.accounts.findUnique({ where: {id:payload.id} })
       
       const address = await this.prisma.userAdress.findUnique({where:{accountID:payload.id}})
-      const {gaID,houseNo,village,lane,road} = address
+      const {postalCode,province,district,subDistrict,houseNo,village,lane,road} = address
       const {firstName,middleName,lastName,BoD,phone,email,pictureProfile}=foundUser
       const data ={
         firstName,
@@ -230,7 +233,10 @@ export class AuthService {
         email,
         pictureProfile,
         address:{
-          gaID,
+          postalCode,
+          province,
+          district,
+          subDistrict,
           houseNo,
           village,
           lane,

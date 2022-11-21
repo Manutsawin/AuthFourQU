@@ -54,7 +54,10 @@ model accountCareer{
 
 model userAdress{
   accountID String @unique
-  gaID String 
+  postalCode String
+  province String
+  district String
+  subDistrict String
   houseNo String
   village String
   lane String
@@ -99,7 +102,10 @@ model shop{
 
 model shopAddress{
   shopID String @unique @default(uuid())
-  gaID String 
+  postalCode String
+  province String
+  district String
+  subDistrict String
   houseNO String
   village String
   lane String

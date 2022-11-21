@@ -17,10 +17,12 @@ export class ShopService {
 
       
       const payload = await this.auth.validateAdminToken(req.headers.authorization.split(" ")[1])
-      const {accountID,shopName,bussinessType,createdDate,salesPerYear,gaID,houseNO,village,lane,road} = dto
+    
+      const {accountID,shopName,bussinessType,createdDate,salesPerYear,postalCode,province,district,subDistrict,houseNO,village,lane,road} = dto
       const d = new Date() //test time
-      
+   
       const account = await this.prisma.accounts.findUnique({where:{id:accountID}})
+   
       const shop = await this.prisma.shop.create({
         data:{
           accountID:accountID,
@@ -30,18 +32,23 @@ export class ShopService {
           salesPerYear:salesPerYear,
         }
       })
-      
 
+      
+      
       await this.prisma.shopAddress.create({
         data:{
           shopID:shop.id,
-          gaID:gaID,
+          postalCode,
+          province,
+          district,
+          subDistrict,
           houseNO:houseNO,
           village:village,
           lane:lane,
           road:road,
         }
       })
+      
 
       const bodyCreateShopPayment = {
         "shopID":shop.id,
@@ -73,14 +80,17 @@ export class ShopService {
       const payload = req.user as payload
       const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
       const address = await this.prisma.shopAddress.findUnique({where:{shopID:shop.id}})
-      const {gaID,houseNO,village,lane,road}=address
+      const {postalCode,province,district,subDistrict,houseNO,village,lane,road}=address
       const data = {
         id:shop.id,
         acountID:shop.accountID,
         shopName:shop.shopName,
         bussinessType:shop.bussinessType,
         address:{
-          gaID,
+          postalCode,
+          province,
+          district,
+          subDistrict,
           houseNO,
           village,
           lane,

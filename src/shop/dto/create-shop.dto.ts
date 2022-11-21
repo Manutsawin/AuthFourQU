@@ -29,7 +29,19 @@ export class CreateShopDto {
 
     @IsNotEmpty()
     @IsString()
-    public gaID : string
+    public postalCode : string
+
+    @IsNotEmpty()
+    @IsString()
+    public province : string
+    
+    @IsNotEmpty()
+    @IsString()
+    public district : string
+
+    @IsNotEmpty()
+    @IsString()
+    public subDistrict : string
 
     @IsNotEmpty()
     @IsString()
