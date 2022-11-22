@@ -83,7 +83,7 @@ export class OtpService {
             "timeStamp": new Date().toUTCString()
         }
         console.log("send email register")
-        // const responseMailRegis = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}email-notification/welcome`,bodyRegister);
+        const responseMailRegis = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}email-notification/welcome`,bodyRegister);
         
         const bodyAct = {
           "destEmail":user.email,

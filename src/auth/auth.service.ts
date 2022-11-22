@@ -69,22 +69,20 @@ export class AuthService {
       })
 
       console.log("create payment Account")
-      // const bodyCreatePayment = {
-      //   "accountID":user.id,
-      // }
-      // const createPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/user-payment/create`,bodyCreatePayment);
-      // const updateUser = await this.prisma.accounts.update({
-      //   where:{id:user.id},
-      //   data:{ accountNumber : createPaymentRes.data.userPayment.accountNumber}
-      // })
+      const bodyCreatePayment = {
+        "accountID":user.id,
+      }
+      const createPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}user-payment/create`,bodyCreatePayment);
+      console.log(createPaymentRes.data)
+      const updateUser = await this.prisma.accounts.update({
+        where:{id:user.id},
+        data:{ accountNumber : createPaymentRes.data.userPayment.accountNumber}
+      })
       
       console.log("send OTP")
       
       await this.otpService.sendOTP(user.id,user.email,req)
       console.log("finished send otp to mail")
-
-      // const token = await this.signRefreshToken(user.id)
-      // return res.status(201).send({token:token,id:user.id,time_stamp:new Date().toUTCString()})
 
       return res.status(201).send({message:"waiting for confirmation",id:user.id,time_stamp:new Date().toUTCString()})
     }
