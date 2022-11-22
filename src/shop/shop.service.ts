@@ -91,6 +91,7 @@ export class ShopService {
         acountID:shop.accountID,
         shopName:shop.shopName,
         bussinessType:shop.bussinessType,
+        accountNumber:shop.accountNumber,
         address:{
           postalCode,
           province,

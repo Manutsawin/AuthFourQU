@@ -364,7 +364,7 @@ export class AuthService {
       const foundUser = await this.prisma.accounts.findFirst({ where: {accountNumber:req.body.accountNumber} })
       const address = await this.prisma.userAdress.findUnique({where:{accountID:foundUser.id}})
       const {postalCode,province,district,subDistrict,houseNo,village,lane,road} = address
-      const {firstName,middleName,lastName,BoD,phone,email,pictureProfile}=foundUser
+      const {firstName,middleName,lastName,BoD,phone,email,pictureProfile,accountNumber}=foundUser
       const data ={
         firstName,
         middleName,
@@ -373,6 +373,7 @@ export class AuthService {
         phone,
         email,
         pictureProfile,
+        accountNumber,
         address:{
           postalCode,
           province,
