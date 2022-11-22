@@ -105,7 +105,10 @@ export class CentralService {
   async userPaymentInfo(req:Request ,res:Response){
     try{
       const payload = req.user as payload
+      console.log("before")
+      console.log(payload.id)
       const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/info/${payload.id}`);
+      console.log(response.data)
       return res.status(200).send(response.data) ;
     }
     catch{
