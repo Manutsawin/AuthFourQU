@@ -207,8 +207,8 @@ export class CentralService {
       const payload = req.user as payload
       const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
       const responseUserPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/info/${payload.id}`);
-      const response = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}user-payment/`,{
-        "userAccountNumber": responseUserPayment.data.userPayment.accountID,
+      const body = {
+        "userAccountNumber": responseUserPayment.data.userPayment.accountNumber,
         "userAccountName": user.firstName,
         "otherAccountNumber": req.body.otherAccountNumber,
         "nameOther": req.body.nameOther,
@@ -220,7 +220,13 @@ export class CentralService {
         "fee": req.body.fee,
         "sourceEmail": user.email,
         "destEmail": req.body.destEmail,
-      });
+        "desPhone":req.body.desPhone,
+        "ref":req.body.ref
+      }
+      console.log(body)
+      console.log("send")
+      const response = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}user-payment/transfer/same`,body);
+      console.log(response.data)
       return res.status(200).send(response.data) ;
     }
     catch{
