@@ -47,10 +47,10 @@ export class OtpService {
         "timeStart":new Date().toUTCString(),
         "IPAddress":req.ip
       }
-      console.log("create OTP Transaction")
-      const resCreateTransacOtp = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/otp-transaction`,bodyOtp);
-      console.log("asdas")
-      console.log(resCreateTransacOtp.data)
+      // console.log("create OTP Transaction")
+      // const resCreateTransacOtp = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}otp-transaction`,bodyOtp);
+      // console.log("sended")
+      // console.log(resCreateTransacOtp.data)
       
       return  otp;
     }
@@ -73,8 +73,8 @@ export class OtpService {
         const user = await this.prisma.accounts.findUnique({where:{id:dto.id}})
 
         console.log("update Otp")
-        const qresponseOtpUpdate = await this.httpService.axiosRef.patch(`${TRANSACTION_SERVICE_URL}otp-transaction`,{id:user.id});
-        console.log(qresponseOtpUpdate.data)
+        // const qresponseOtpUpdate = await this.httpService.axiosRef.patch(`${TRANSACTION_SERVICE_URL}otp-transaction`,{id:user.id});
+        // console.log(qresponseOtpUpdate.data)
 
         console.log("api transaction")
         const bodyRegister = {
