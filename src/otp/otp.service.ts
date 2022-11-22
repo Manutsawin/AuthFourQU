@@ -7,8 +7,7 @@ import { BadRequestException } from '@nestjs/common';
 import {otpDto} from '../otp/dto/otp.dto'
 import { userInfo } from 'os';
 import { HttpService } from '@nestjs/axios';
-import { TRANSACTION_SERVICE_URL } from 'src/httpConfig';
-
+import { TRANSACTION_SERVICE_URL,MAIL_SERVICE_URL } from 'src/httpConfig';
 
 @Injectable()
 export class OtpService {
@@ -61,8 +60,6 @@ export class OtpService {
  
   async checkOTP(dto:otpDto,req:Request ,res:Response) {
 
-    
-    
     try {
       
       const otp = await this.prisma.oTP.findFirst({where:{accountID:dto.id}})
@@ -86,7 +83,7 @@ export class OtpService {
             "timeStamp": new Date().toUTCString()
         }
         console.log("send email register")
-        // const responseMailRegis = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/welcome',bodyRegister);
+        // const responseMailRegis = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}/email-notification/welcome`,bodyRegister);
         
         const bodyAct = {
           "destEmail":user.email,
@@ -96,7 +93,7 @@ export class OtpService {
           "timeStamp": new Date().toUTCString()
         }
         console.log("send email activity")
-        // const responseMailAct = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/activity',bodyAct);
+        // const responseMailAct = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}/email-notification/activity`,bodyAct);
 
         console.log("create activity")
         const bodyActTransac = {
@@ -106,7 +103,7 @@ export class OtpService {
         // const createActTransac = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/activity-transaction/`,bodyActTransac);
 
         const token = await this.auth.signRefreshToken(dto.id)
-        return res.status(200).send({token:token})
+        return res.status(200).send({Refreshtoken:token})
       }
       return res.status(304).send({message:'Not found'})
     } catch (error) {
@@ -125,7 +122,7 @@ export class OtpService {
         "OTP": otp.OtpNumber
       }
       console.log("beforesendmail")
-      const responseMail = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/otp',body);
+      const responseMail = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}/email-notification/otp`,body);
       //send otp to mail
       console.log("sendmail")
       return responseMail

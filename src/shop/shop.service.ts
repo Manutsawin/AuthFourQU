@@ -30,6 +30,7 @@ export class ShopService {
           bussinessType:bussinessType,
           createdDate:d, //must edit later
           salesPerYear:salesPerYear,
+          accountNumber:""
         }
       })
 
@@ -56,13 +57,17 @@ export class ShopService {
       }
       const createShopPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/shop-payment/create`,bodyCreateShopPayment);
 
+      const updateShop = await this.prisma.shop.update({
+        where:{id:shop.id},
+        data:{ accountNumber : createShopPaymentRes.data.shopPayment.accountNumber}
+      })
+
       const bodymail = {  
         "destEmail" : account.email,
         "name" : account.firstName,
         "shopName" : shop.shopName
       }
      
-      
       const mailShop = await this.httpService.axiosRef.post('http://192.168.1.38:8090/email-notification/shop-registered',bodymail);
      
 

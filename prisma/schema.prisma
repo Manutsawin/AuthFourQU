@@ -35,6 +35,7 @@ model Accounts{
   email String @unique
   title String 
   country String
+  accountNumber String
   isVerified Boolean @default(false) 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -96,6 +97,7 @@ model shop{
   bussinessType String
   createdDate DateTime
   salesPerYear Float
+  accountNumber String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   deleted_at DateTime? 

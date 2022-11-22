@@ -10,9 +10,9 @@ import { OtpService } from '../otp/otp.service';
 import { JwtRefreshService } from '../jwt-refresh/jwt-refresh.service';
 import { HttpService } from '@nestjs/axios';
 import { payload } from './jwt.strategy';
-import { PAYMENT_SERVICE_URL } from 'src/httpConfig';
-import { TRANSACTION_SERVICE_URL } from 'src/httpConfig';
+import { PAYMENT_SERVICE_URL ,TRANSACTION_SERVICE_URL} from 'src/httpConfig';
 import * as bcrypt from 'bcrypt';
+import { create } from 'domain';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +39,8 @@ export class AuthService {
           citizenship,
           email,
           title,
-          country
+          country,
+          accountNumber:""
         }
       })
       
@@ -65,11 +66,18 @@ export class AuthService {
         }
       })
 
-      const bodyCreatePayment = {
-        "accountID":user.id,
-      }
+      console.log("create payment Account")
+      // const bodyCreatePayment = {
+      //   "accountID":user.id,
+      // }
       // const createPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/user-payment/create`,bodyCreatePayment);
-      console.log("sadas")
+      // const updateUser = await this.prisma.accounts.update({
+      //   where:{id:user.id},
+      //   data:{ accountNumber : createPaymentRes.data.userPayment.accountNumber}
+      // })
+      
+      console.log("send OTP")
+      
       await this.otpService.sendOTP(user.id,user.email,req)
       console.log("finished send otp to mail")
 
@@ -193,7 +201,7 @@ export class AuthService {
       time_stamp: new Date().toISOString()
       }
       const token = await this.jwt.signAsync(data,{secret:jwtSecretAcess})
-      return res.status(200).send({token,time_stamp:new Date().toUTCString()})
+      return res.status(200).send({AcessToken:token,time_stamp:new Date().toUTCString()})
     }
     catch{
       return res.status(400).send({message:"Bad Request"})
