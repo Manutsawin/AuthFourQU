@@ -331,12 +331,14 @@ export class CentralService {
         "shopName": shop.shopName,
         "phone": user.phone,
         "otherAccountNumber": req.body.otherAccountNumber,
-        "nameOther": req.body.nameOtherm,
+        "nameOther": "4QU",
         "bankNameOther": req.body.bankNameOther,
         "amount": req.body.amount,
         "fee": req.body.fee,
         "type": "tranfer",
-        "IPAddress": req.ip
+        "IPAddress": req.ip,
+        "desPhone": req.body.desPhone,
+        "ref": req.body.ref,
       });
       return res.status(200).send(response.data) ;
     }
