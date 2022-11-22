@@ -2,7 +2,7 @@ import { Controller, Get, Post,Req,Res ,Patch, UseGuards} from '@nestjs/common';
 import { CentralService } from './central.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@Controller('access')
+@Controller('')
 export class CentralController {
   constructor(private readonly centralService: CentralService) {}
   
