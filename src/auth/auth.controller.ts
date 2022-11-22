@@ -82,4 +82,9 @@ export class AuthController {
   getInformationByAccountNumber( @Req() req, @Res() res){
     return this.authService.getUserInformationByAccountNumber(req,res)
   }
+
+  @Get('getAllUser')
+  getIAllUser( @Req() req, @Res() res){
+    return this.authService.getAllUser(req,res)
+  }
 }
