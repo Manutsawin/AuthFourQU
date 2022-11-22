@@ -45,14 +45,14 @@ export class OtpService {
         "refNumber": accountID,
         "type":"login",
         "timeStart":new Date().toUTCString(),
-        "isFinished":false,
         "IPAddress":req.ip
       }
       console.log("create OTP Transaction")
-      const resCreateTransacOtp = await this.httpService.axiosRef.post('${TRANSACTION_SERVICE_URL}/otp-transaction',bodyOtp);
+      const resCreateTransacOtp = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/otp-transaction`,bodyOtp);
+      console.log("asdas")
       console.log(resCreateTransacOtp.data)
       
-      return otp;
+      return  otp;
     }
     catch{
       return null
@@ -118,6 +118,8 @@ export class OtpService {
       
       const otp = await this.createOTP(accountID,req)
       console.log("beforeCreateBody")
+      console.log(email)
+      console.log(otp)
       const body={
         "destEmail" : email,
         "OTP": otp.OtpNumber

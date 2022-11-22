@@ -212,7 +212,7 @@ export class CentralService {
         "userAccountName": user.firstName,
         "otherAccountNumber": req.body.otherAccountNumber,
         "nameOther": req.body.nameOther,
-        "bankNameOther": req.body.bankNameOther,
+        "bankNameOther": "4QU",
         "sourcePhone": user.phone,
         "destPhone": req.body.destPhone,
         "IPAddress": req.ip,
@@ -223,10 +223,8 @@ export class CentralService {
         "desPhone":req.body.desPhone,
         "ref":req.body.ref
       }
-      console.log(body)
       console.log("send")
       const response = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}user-payment/transfer/same`,body);
-      console.log(response.data)
       return res.status(200).send(response.data) ;
     }
     catch{
