@@ -30,7 +30,7 @@ export class CentralController {
 
 //PAYMENT
 //-------->
-  @UseGuards(JwtAuthGuard)
+ 
   @Post('user-payment/deposit')
   userDeposit(@Req() req, @Res() res) {
     this.centralService.userDeposit(req,res)

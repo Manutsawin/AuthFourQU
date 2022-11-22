@@ -85,9 +85,9 @@ export class CentralService {
 
   async userDeposit(req:Request ,res:Response){
     try{
-      const payload = req.user as payload
-      const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
-      const responseUserPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/info/${payload.id}`);
+       
+      const user = await this.prisma.accounts.findUnique({where:{id:req.body.id}})
+      const responseUserPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/info/${req.body.id.id}`);
       const body = {
         "accountNumber":responseUserPayment.data.userPayment.accountID,
         "accountID":user.id,
