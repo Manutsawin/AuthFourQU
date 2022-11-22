@@ -12,7 +12,7 @@ import { HttpService } from '@nestjs/axios';
 import { payload } from './jwt.strategy';
 import { PAYMENT_SERVICE_URL ,TRANSACTION_SERVICE_URL} from 'src/httpConfig';
 import * as bcrypt from 'bcrypt';
-import { create } from 'domain';
+
 
 @Injectable()
 export class AuthService {
@@ -21,12 +21,14 @@ export class AuthService {
   async signup(dto:AuthDto,req:Request ,res:Response){ 
     try{
       const {LaserID,SSN,firstName,middleName,lastName,BoD,phone,citizenship,email,title,country,salary,careerID,postalCode,province,district,subDistrict,houseNO,village,lane,road}=dto
-      
+     
       const foundSSN = await this.prisma.accounts.findUnique({where:{SSN}});
       if(foundSSN){
-        throw new BadRequestException('Bad Request');
+        throw new BadRequestException('Bad Request SSN');
       }
+      console.log("ok")
       let myDate: any = new Date();// date test
+      
       const user = await this.prisma.accounts.create({
         data:{
           LaserID,
@@ -43,7 +45,7 @@ export class AuthService {
           accountNumber:""
         }
       })
-      
+      console.log("created")
       await this.prisma.accountCareer.create({
         data:{
           accountID:user.id,
@@ -51,7 +53,7 @@ export class AuthService {
           salary: Number(salary),
         }
       })
-
+      console.log("career created")
       await this.prisma.userAdress.create({
         data:{
           accountID:user.id,

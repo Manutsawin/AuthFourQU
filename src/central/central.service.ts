@@ -20,7 +20,7 @@ export class CentralService {
           const payload = req.user as payload
           const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
             console.log("userStatement")
-            const response = await  this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/payment-transaction/statement`,{
+            const response = await  this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}payment-transaction/statement`,{
               "userAccountID": payload.id,
               "userAccountNumber":"",
               "sourceEmail":req.body.destEmail,
@@ -79,7 +79,7 @@ export class CentralService {
       "name":user.firstName,
       "Date":req.body.Date
     }
-    const statementRes = await this.httpService.axiosRef.post('http://localhost:3001/payment-transaction/statement',bodyStatement);
+    const statementRes = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/payment-transaction/statement`,bodyStatement);
     return res.status(200).send({data:statementRes})
   }
 
@@ -87,14 +87,14 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
-      const responseUserPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/user-payment/info/${payload.id}`);
+      const responseUserPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/info/${payload.id}`);
       const body = {
         "accountNumber":responseUserPayment.data.userPayment.accountID,
         "accountID":user.id,
         "amount":req.body.amount,
         "fee":req.body.fee
       }
-      const response = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/user-payment/deposit`,body);
+      const response = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}user-payment/deposit`,body);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -105,7 +105,7 @@ export class CentralService {
   async userPaymentInfo(req:Request ,res:Response){
     try{
       const payload = req.user as payload
-      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/user-payment/info/${payload.id}`);
+      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/info/${payload.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -116,7 +116,7 @@ export class CentralService {
   async userPaymentBalance(req:Request ,res:Response){
     try{
       const payload = req.user as payload
-      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/user-payment/balanced/${payload.id}`);
+      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/balanced/${payload.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -128,7 +128,7 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
-      const responseUserPayment = await this.httpService.get(`${PAYMENT_SERVICE_URL}/user-payment/balanced/${payload.id}`,{
+      const responseUserPayment = await this.httpService.get(`${PAYMENT_SERVICE_URL}user-payment/balanced/${payload.id}`,{
         data:{
           accountID: user.firstName,
           name: user.firstName,
@@ -145,7 +145,7 @@ export class CentralService {
   async getPaymentLimitPerDay(req:Request ,res:Response){
     try{
       const payload = req.user as payload
-      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/user-payment/limit/day/${payload.id}`);
+      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/limit/day/${payload.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -156,7 +156,7 @@ export class CentralService {
   async patchPaymentLimitPerDay(req:Request ,res:Response){
     try{
       const payload = req.user as payload
-      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}/user-payment/limit/day/`,{
+      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}user-payment/limit/day/`,{
         "id":payload.id,
         "amount":req.body.amount
       });
@@ -170,7 +170,7 @@ export class CentralService {
   async getPaymentAllow(req:Request ,res:Response){
     try{
       const payload = req.user as payload
-      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/user-payment/allow/${payload.id}`);
+      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/allow/${payload.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -181,7 +181,7 @@ export class CentralService {
   async patchBlockPayment(req:Request ,res:Response){
     try{
       const payload = req.user as payload
-      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}/user-payment/limit/day/${payload.id}`);
+      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}user-payment/limit/day/${payload.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -192,7 +192,7 @@ export class CentralService {
   async patchUnBlockPayment(req:Request ,res:Response){
     try{
       const payload = req.user as payload
-      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}/user-payment/payment/unblock/${payload.id}`);
+      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}user-payment/payment/unblock/${payload.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -204,8 +204,8 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
-      const responseUserPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/user-payment/info/${payload.id}`);
-      const response = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/user-payment/`,{
+      const responseUserPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/info/${payload.id}`);
+      const response = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}user-payment/`,{
         "userAccountNumber": responseUserPayment.data.userPayment.accountID,
         "userAccountName": user.firstName,
         "otherAccountNumber": req.body.otherAccountNumber,
@@ -231,7 +231,7 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
-      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/shop-payment/info/${shop.id}`);
+      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}shop-payment/info/${shop.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -243,7 +243,7 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
-      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/shop-payment/balanced/${shop.id}`);
+      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}shop-payment/balanced/${shop.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -256,7 +256,7 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
-      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/shop-payment/limit/${shop.id}`);
+      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}shop-payment/limit/${shop.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -268,7 +268,7 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
-      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}/shop-payment/limit/`,{
+      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}shop-payment/limit/`,{
         "shopID": shop.id,
         "amount":req.body.amount
       });
@@ -283,7 +283,7 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
-      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/shop-payment/is-allow/${shop.id}`);
+      const response = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}shop-payment/is-allow/${shop.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -295,7 +295,7 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
-      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}/shop-payment/block/${shop.id}`);
+      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}shop-payment/block/${shop.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -307,7 +307,7 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
-      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}/shop-payment/unblock/${shop.id}`);
+      const response = await this.httpService.axiosRef.patch(`${PAYMENT_SERVICE_URL}shop-payment/unblock/${shop.id}`);
       return res.status(200).send(response.data) ;
     }
     catch{
@@ -320,8 +320,8 @@ export class CentralService {
       const payload = req.user as payload
       const shop = await this.prisma.shop.findUnique({where:{accountID:payload.id}})
       const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
-      const responseShopPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}/shop-payment/info/${shop.id}`);;
-      const response = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/shop-payment/transfer/same/`,{
+      const responseShopPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}shop-payment/info/${shop.id}`);;
+      const response = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}shop-payment/transfer/same/`,{
         "shopAccountNumber": responseShopPayment.data.shopPayment.accountNumber,
         "shopName": shop.shopName,
         "phone": user.phone,

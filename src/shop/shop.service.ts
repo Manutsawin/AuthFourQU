@@ -6,7 +6,7 @@ import { AuthService } from '../auth/auth.service'
 import { BadRequestException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { payload } from '../auth/jwt.strategy';
-import { PAYMENT_SERVICE_URL } from 'src/httpConfig';
+import { PAYMENT_SERVICE_URL,MAIL_SERVICE_URL } from 'src/httpConfig';
 
 @Injectable()
 export class ShopService {
@@ -55,7 +55,7 @@ export class ShopService {
         "shopID":shop.id,
         "callbackURL":req.body.callbackURL
       }
-      const createShopPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}/shop-payment/create`,bodyCreateShopPayment);
+      const createShopPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}shop-payment/create`,bodyCreateShopPayment);
 
       const updateShop = await this.prisma.shop.update({
         where:{id:shop.id},
@@ -68,7 +68,7 @@ export class ShopService {
         "shopName" : shop.shopName
       }
      
-      const mailShop = await this.httpService.axiosRef.post('http://192.168.1.38:8090/email-notification/shop-registered',bodymail);
+      const mailShop = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}email-notification/shop-registered`,bodymail);
      
 
       return res.status(201).send({shop:shop,time_stamp:new Date().toUTCString()})

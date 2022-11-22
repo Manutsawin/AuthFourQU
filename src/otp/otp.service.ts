@@ -72,7 +72,7 @@ export class OtpService {
         const user = await this.prisma.accounts.findUnique({where:{id:dto.id}})
 
         console.log("update Otp")
-        // const qresponseOtpUpdate = await this.httpService.axiosRef.patch(`${TRANSACTION_SERVICE_URL}/otp-transaction`,{id:user.id});
+        // const qresponseOtpUpdate = await this.httpService.axiosRef.patch(`${TRANSACTION_SERVICE_URL}otp-transaction`,{id:user.id});
 
         console.log("api transaction")
         const bodyRegister = {
@@ -83,7 +83,7 @@ export class OtpService {
             "timeStamp": new Date().toUTCString()
         }
         console.log("send email register")
-        // const responseMailRegis = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}/email-notification/welcome`,bodyRegister);
+        // const responseMailRegis = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}email-notification/welcome`,bodyRegister);
         
         const bodyAct = {
           "destEmail":user.email,
@@ -93,14 +93,14 @@ export class OtpService {
           "timeStamp": new Date().toUTCString()
         }
         console.log("send email activity")
-        // const responseMailAct = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}/email-notification/activity`,bodyAct);
+        // const responseMailAct = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}email-notification/activity`,bodyAct);
 
         console.log("create activity")
         const bodyActTransac = {
           "accountID":user.id,
           "IPAddress":req.ip
         }
-        // const createActTransac = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/activity-transaction/`,bodyActTransac);
+        // const createActTransac = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}activity-transaction/`,bodyActTransac);
 
         const token = await this.auth.signRefreshToken(dto.id)
         return res.status(200).send({Refreshtoken:token})
@@ -122,7 +122,7 @@ export class OtpService {
         "OTP": otp.OtpNumber
       }
       console.log("beforesendmail")
-      const responseMail = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}/email-notification/otp`,body);
+      const responseMail = await this.httpService.axiosRef.post(`${MAIL_SERVICE_URL}email-notification/otp`,body);
       //send otp to mail
       console.log("sendmail")
       return responseMail

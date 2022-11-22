@@ -16,6 +16,7 @@ CREATE TABLE "Accounts" (
     "email" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "country" TEXT NOT NULL,
+    "accountNumber" TEXT NOT NULL,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -83,6 +84,7 @@ CREATE TABLE "shop" (
     "bussinessType" TEXT NOT NULL,
     "createdDate" TIMESTAMP(3) NOT NULL,
     "salesPerYear" DOUBLE PRECISION NOT NULL,
+    "accountNumber" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3)
