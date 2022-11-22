@@ -86,7 +86,7 @@ export class OtpService {
             "timeStamp": new Date().toUTCString()
         }
         console.log("send email register")
-        const responseMailRegis = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/welcome',bodyRegister);
+        // const responseMailRegis = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/welcome',bodyRegister);
         
         const bodyAct = {
           "destEmail":user.email,
@@ -96,7 +96,7 @@ export class OtpService {
           "timeStamp": new Date().toUTCString()
         }
         console.log("send email activity")
-        const responseMailAct = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/activity',bodyAct);
+        // const responseMailAct = await this.httpService.axiosRef.post('https://quplus-noti-service.herokuapp.com/email-notification/activity',bodyAct);
 
         console.log("create activity")
         const bodyActTransac = {
