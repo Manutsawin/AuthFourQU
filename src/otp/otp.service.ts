@@ -102,7 +102,7 @@ export class OtpService {
           "accountID":user.id,
           "IPAddress":req.ip
         }
-        const createActTransac = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}activity-transaction/`,bodyActTransac);
+        // const createActTransac = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}activity-transaction/`,bodyActTransac);
 
         const token = await this.auth.signRefreshToken(dto.id)
         return res.status(200).send({Refreshtoken:token})
