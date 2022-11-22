@@ -394,6 +394,7 @@ export class AuthService {
 
   async getAllUser(req:Request ,res:Response){
     try{
+      const payload = await this.validateAdminToken(req.headers.authorization.split(" ")[1])
       const foundUser = await this.prisma.accounts.findMany()
       return res.status(200).send({foundUser,time_stamp:new Date().toUTCString()})
     }
