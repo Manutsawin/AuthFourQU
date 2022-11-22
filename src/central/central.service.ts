@@ -8,6 +8,7 @@ import { lastValueFrom, map, Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { brotliDecompressSync } from 'zlib';
 import { PAYMENT_SERVICE_URL } from 'src/httpConfig';
+import { TRANSACTION_SERVICE_URL } from 'src/httpConfig';
 
 @Injectable()
 export class CentralService { 
@@ -19,7 +20,7 @@ export class CentralService {
           const payload = req.user as payload
           const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
             console.log("userStatement")
-            const response = await  this.httpService.axiosRef.post(`payment-transaction/statement`,{
+            const response = await  this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/payment-transaction/statement`,{
               "userAccountID": payload.id,
               "userAccountNumber":"",
               "sourceEmail":req.body.destEmail,
@@ -35,24 +36,24 @@ export class CentralService {
         } 
   }
 
-  async shopStatement(req:Request ,res:Response){
-        try{
-          const payload = req.user as payload
-          const accountID = payload.id
-          const shop = await this.prisma.shop.findUnique({where:{accountID}})
-          console.log("getShopStatement")
-          const response = await  this.httpService.axiosRef.get('http://localhost:3000/api/access/test',{
-              params:{
-                id:payload.id,
-              }
-            });
-            console.log(response.data)
-            return res.status(200).send(response.data) ;
-        }
-        catch{
-          return res.status(400).send({message:"Bad Request"})
-        } 
-  }
+  // async shopStatement(req:Request ,res:Response){
+  //       try{
+  //         const payload = req.user as payload
+  //         const accountID = payload.id
+  //         const shop = await this.prisma.shop.findUnique({where:{accountID}})
+  //         console.log("getShopStatement")
+  //         const response = await  this.httpService.axiosRef.get('http://localhost:3000/api/access/test',{
+  //             params:{
+  //               id:payload.id,
+  //             }
+  //           });
+  //           console.log(response.data)
+  //           return res.status(200).send(response.data) ;
+  //       }
+  //       catch{
+  //         return res.status(400).send({message:"Bad Request"})
+  //       } 
+  // }
 
   async testPost(req:Request ,res:Response){
     console.log(req.body)

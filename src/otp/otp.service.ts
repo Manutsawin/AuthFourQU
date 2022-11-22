@@ -7,6 +7,7 @@ import { BadRequestException } from '@nestjs/common';
 import {otpDto} from '../otp/dto/otp.dto'
 import { userInfo } from 'os';
 import { HttpService } from '@nestjs/axios';
+import { TRANSACTION_SERVICE_URL } from 'src/httpConfig';
 
 
 @Injectable()
@@ -49,7 +50,7 @@ export class OtpService {
         "IPAddress":req.ip
       }
       console.log("create OTP Transaction")
-      // const resCreateTransacOtp = await this.httpService.axiosRef.post('http://localhost:3001/otp-transaction',bodyOtp);
+      // const resCreateTransacOtp = await this.httpService.axiosRef.post('${TRANSACTION_SERVICE_URL}/otp-transaction',bodyOtp);
       
       return otp;
     }
@@ -74,7 +75,7 @@ export class OtpService {
         const user = await this.prisma.accounts.findUnique({where:{id:dto.id}})
 
         console.log("update Otp")
-        // const qresponseOtpUpdate = await this.httpService.axiosRef.patch('http://localhost:3001/otp-transaction',{id:user.id});
+        // const qresponseOtpUpdate = await this.httpService.axiosRef.patch(`${TRANSACTION_SERVICE_URL}/otp-transaction`,{id:user.id});
 
         console.log("api transaction")
         const bodyRegister = {
@@ -102,7 +103,7 @@ export class OtpService {
           "accountID":user.id,
           "IPAddress":req.ip
         }
-        // const createActTransac = await this.httpService.axiosRef.post('http://localhost:3001/activity-transaction/',bodyActTransac);
+        // const createActTransac = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/activity-transaction/`,bodyActTransac);
 
         const token = await this.auth.signRefreshToken(dto.id)
         return res.status(200).send({token:token})

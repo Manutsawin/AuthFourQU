@@ -12,11 +12,11 @@ export class CentralController {
     this.centralService.statement(req,res)
   }
   
-  @UseGuards(JwtAuthGuard)
-  @Get('shopStatement')
-  getShopStatement(@Req() req, @Res() res) {
-    this.centralService.shopStatement(req,res)
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Get('shopStatement')
+  // getShopStatement(@Req() req, @Res() res) {
+  //   this.centralService.shopStatement(req,res)
+  // }
 
   @Post('test')
   postTest(@Req() req, @Res() res) {

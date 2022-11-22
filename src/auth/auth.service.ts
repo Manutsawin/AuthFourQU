@@ -11,6 +11,7 @@ import { JwtRefreshService } from '../jwt-refresh/jwt-refresh.service';
 import { HttpService } from '@nestjs/axios';
 import { payload } from './jwt.strategy';
 import { PAYMENT_SERVICE_URL } from 'src/httpConfig';
+import { TRANSACTION_SERVICE_URL } from 'src/httpConfig';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -99,7 +100,7 @@ export class AuthService {
         "IPAddress":req.ip
       }
 
-      // const createActTransac = await this.httpService.axiosRef.post('http://localhost:3001/activity-transaction/',bodyActTransac);
+      // const createActTransac = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/activity-transaction/`,bodyActTransac);
       
       const bodyAct = {
         "destEmail":foundUser.email,
