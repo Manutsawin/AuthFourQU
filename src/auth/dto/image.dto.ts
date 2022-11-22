@@ -2,9 +2,9 @@ import { FileSystemStoredFile, HasMimeType, IsFile, MaxFileSize, MemoryStoredFil
 
 export class ImgDto {
 
-    @IsFile()
-    @MaxFileSize(1e6)
-    @HasMimeType(['image/jpeg', 'image/png'])
+    // @IsFile()
+    // @MaxFileSize(1e6)
+    // @HasMimeType(['image/jpeg', 'image/png'])
     image: FileSystemStoredFile
     
   }

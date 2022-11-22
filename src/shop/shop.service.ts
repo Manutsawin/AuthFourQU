@@ -55,12 +55,12 @@ export class ShopService {
         "shopID":shop.id,
         "callbackURL":req.body.callbackURL
       }
-      // const createShopPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}shop-payment/create`,bodyCreateShopPayment);
+      const createShopPaymentRes = await this.httpService.axiosRef.post(`${PAYMENT_SERVICE_URL}shop-payment/create`,bodyCreateShopPayment);
 
-      // const updateShop = await this.prisma.shop.update({
-      //   where:{id:shop.id},
-      //   data:{ accountNumber : createShopPaymentRes.data.shopPayment.accountNumber}
-      // })
+      const updateShop = await this.prisma.shop.update({
+        where:{id:shop.id},
+        data:{ accountNumber : createShopPaymentRes.data.shopPayment.accountNumber}
+      })
 
       const bodymail = {  
         "destEmail" : account.email,
