@@ -358,4 +358,39 @@ export class AuthService {
     
   }
 
+  async getUserInformationByAccountNumber(req:Request ,res:Response){
+    try{
+
+      const payload = req.user as payload
+      const foundUser = await this.prisma.accounts.findFirst({ where: {accountNumber:req.body.accountNumber} })
+      const address = await this.prisma.userAdress.findUnique({where:{accountID:foundUser.id}})
+      const {postalCode,province,district,subDistrict,houseNo,village,lane,road} = address
+      const {firstName,middleName,lastName,BoD,phone,email,pictureProfile}=foundUser
+      const data ={
+        firstName,
+        middleName,
+        lastName,
+        BoD,
+        phone,
+        email,
+        pictureProfile,
+        address:{
+          postalCode,
+          province,
+          district,
+          subDistrict,
+          houseNo,
+          village,
+          lane,
+          road
+        }
+      }
+      return res.status(200).send({data,time_stamp:new Date().toUTCString()})
+    }
+    catch{
+      return res.status(400).send({message:"Bad Request"})
+    } 
+  }
+
+
 }

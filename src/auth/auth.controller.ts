@@ -76,4 +76,10 @@ export class AuthController {
   signInNewRefreshToken( @Req() req, @Res() res) {
     return this.authService.changeRefreshToken(req,res);
   }
+
+  
+  @Get('informationByAccountNumber')
+  getInformationByAccountNumber( @Req() req, @Res() res){
+    return this.authService.getUserInformationByAccountNumber(req,res)
+  }
 }
