@@ -109,4 +109,17 @@ export class ShopService {
     }
   }
 
+  async getAllShop(req:Request ,res:Response){
+    try{
+      const payload = await this.auth.validateAdminToken(req.headers.authorization.split(" ")[1])
+      const foundShop = await this.prisma.shop.findMany()
+      return res.status(200).send({foundShop,time_stamp:new Date().toUTCString()})
+    }
+    catch{
+      return res.status(400).send({message:"Bad Request"})
+    } 
+  }
+
+
+
 }

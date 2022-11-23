@@ -18,4 +18,9 @@ export class ShopController {
     return this.shopService.getInformation(req,res)
   }
 
+  @Get('getAllShop')
+  getIAllUser( @Req() req, @Res() res){
+    return this.shopService.getAllShop(req,res)
+  }
+
 }
