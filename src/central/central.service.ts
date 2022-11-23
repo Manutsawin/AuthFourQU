@@ -130,14 +130,15 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
-      const responseUserPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment`,{
+      const responseUserPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment/qr/payload`,{
         data:{
           accountID: user.id,
           name: user.firstName,
           fee: req.body.fee
         }
       });
-      return res.status(200).send(responseUserPayment) ;
+      console.log(responseUserPayment.data)
+      return res.status(200).send(responseUserPayment.data) ;
     }
     catch{
       return res.status(400).send({message:"Bad Request"})
