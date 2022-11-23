@@ -130,7 +130,7 @@ export class CentralService {
     try{
       const payload = req.user as payload
       const user = await this.prisma.accounts.findUnique({where:{id:payload.id}})
-      const responseUserPayment = await this.httpService.get(`${PAYMENT_SERVICE_URL}user-payment/${payload.id}`,{
+      const responseUserPayment = await this.httpService.axiosRef.get(`${PAYMENT_SERVICE_URL}user-payment`,{
         data:{
           accountID: user.id,
           name: user.firstName,
