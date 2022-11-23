@@ -36,6 +36,7 @@ export class CentralService {
         } 
   }
 
+  // wait for fix
   // async shopStatement(req:Request ,res:Response){
   //       try{
   //         const payload = req.user as payload

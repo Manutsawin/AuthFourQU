@@ -108,7 +108,7 @@ export class AuthService {
         "IPAddress":req.ip
       }
 
-      // const createActTransac = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/activity-transaction/`,bodyActTransac);
+      const createActTransac = await this.httpService.axiosRef.post(`${TRANSACTION_SERVICE_URL}/activity-transaction/`,bodyActTransac);
       
       const bodyAct = {
         "destEmail":foundUser.email,

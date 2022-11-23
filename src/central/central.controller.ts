@@ -12,6 +12,8 @@ export class CentralController {
     this.centralService.statement(req,res)
   }
   
+
+  // wait for fix
   // @UseGuards(JwtAuthGuard)
   // @Get('shopStatement')
   // getShopStatement(@Req() req, @Res() res) {
