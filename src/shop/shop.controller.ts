@@ -19,7 +19,7 @@ export class ShopController {
   }
 
   @Get('getAllShop')
-  getIAllUser( @Req() req, @Res() res){
+  getIAllShop( @Req() req, @Res() res){
     return this.shopService.getAllShop(req,res)
   }
 
