@@ -49,7 +49,7 @@ export class CentralController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('user-payment/')
+  @Post('user-payment/')
   getQrCodePayload(@Req() req, @Res() res) {
     this.centralService.getQrCodePayload(req,res)
   }
